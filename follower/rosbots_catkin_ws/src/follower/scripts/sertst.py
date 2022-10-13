@@ -32,6 +32,9 @@ class MotorDriverUART:
 
     def twist_callback(self, data):
 
+        self.past_x = -999
+        self.past_y = -999
+
         if ( data.linear.x != self.past_x or data.angular.z != self.past_y):
 
             # rospy.loginfo(rospy.get_caller_id() + \
@@ -42,19 +45,18 @@ class MotorDriverUART:
             self.past_y = data.angular.z
 
             turn = 0
-            if abs(self.past_y) > 30:
+            if abs(self.past_y) > 10:
                 if self.past_y > 0:
-                    turn = 9 + trunc(self.past_y / 30)
+                    turn = trunc( math.ceil( (self.past_y - 10) / 10 ))
                 else:
-                    turn = -9 - trunc(self.past_y / 30)
-
+                    turn = trunc( math.ceil( (self.past_y + 10) / 10 ))
             move = 0
-            if abs(self.past_x) > 5:
+            if abs(self.past_x) > 2:
                 if self.past_x > 0:
-                    move = 24
+                    move = trunc( self.past_x - 2 )
                 else:
-                    move = -24
-            move = 0
+                    move = trunc( self.past_x + 2 )
+            # move = 0
             strhex = 'D{:02x}{:02x}'.format(move+turn+128,move-turn+128)
 
             # rospy.loginfo(rospy.get_caller_id() + ": left: %f -- right: %f", move+turn, move-turn)
@@ -70,11 +72,22 @@ class MotorDriverUART:
         rospy.loginfo(rospy.get_caller_id() + ": Stop motor")
         self.ser.close()
 
+    def read_data(self):
+        if (self.ser.inWaiting() > 0):
+            # read the bytes and convert from binary array to ASCII
+            data_str = self.ser.read(self.ser.inWaiting()).decode('ascii') 
+            # print the incoming string without putting a new-line
+            # ('\n') automatically after every print()
+            # print(data_str, end='')
+
+            rospy.loginfo(data_str)
+
 def main():
     mdriver = MotorDriverUART()
-    rate = rospy.Rate(1)
+    rate = rospy.Rate(100)
 
     while not rospy.is_shutdown():
+        mdriver.read_data()
         rate.sleep()
 
 if __name__ == '__main__':

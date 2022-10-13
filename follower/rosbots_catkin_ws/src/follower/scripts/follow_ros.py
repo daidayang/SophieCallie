@@ -2,6 +2,7 @@
 import cv2
 import math
 import rospy
+import time
 from sensor_msgs.msg import Image
 from cv_bridge import CvBridge, CvBridgeError
 from std_msgs.msg import UInt16
@@ -28,6 +29,8 @@ def main():
     # front_pub = rospy.Publisher('/image_front', Image, queue_size=1)
     drive_cmd_pub = rospy.Publisher('/drive_cmd', Twist, queue_size=1)
 
+    last_twist_send_time = time.time();
+
     # bridge = CvBridge()
     while not rospy.is_shutdown():
 
@@ -50,18 +53,23 @@ def main():
                     x, y, w, h = cv2.boundingRect(red_area)
                     # rospy.loginfo("x=%d, w=%d", x, w)
 
-                    twist_msg = Twist()
-
-                    twist_msg.linear.x = 30 - w
-                    twist_msg.angular.z = x - 160
-
-                    drive_cmd_pub.publish(twist_msg)
-
-                    rospy.loginfo("x=%d", x);
                     # x = x * 255 / 319;
                     # strhex = 'D{:02x}{:02x}'.format(x,x)
                     # rospy.logdebug(strhex);
                     # ser.write
+                else:
+                    w = 30
+                    x = 160
+
+                twist_msg = Twist()
+                twist_msg.linear.x = 30 - w
+                twist_msg.angular.z = x - 160
+
+                now = time.time();
+                if now - last_twist_send_time > 0.5:
+                    drive_cmd_pub.publish(twist_msg)
+                    last_twist_send_time = now
+                    # rospy.loginfo("x=%d", x);
 
         except KeyboardInterrupt:
             rospy.logerror("err")
