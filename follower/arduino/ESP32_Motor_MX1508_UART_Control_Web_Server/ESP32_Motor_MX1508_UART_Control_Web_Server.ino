@@ -1,4 +1,5 @@
 //  https://randomnerdtutorials.com/esp32-web-server-slider-pwm/
+//  https://microcontrollerslab.com/esp32-multiple-sliders-websocket-web-server/
 
 #include <EEPROM.h>
 #include <WiFi.h>
