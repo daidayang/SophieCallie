@@ -1,27 +1,32 @@
 //  https://www.instructables.com/ESP32-Mecanum-Wheels-Robot-and-Bluetooth-Gamepad-C/
 
 #define CUSTOM_SETTINGS
-#define INCLUDE_GAMEPAD_MODULE
+// #define INCLUDE_GAMEPAD_MODULE
 // #include <DabbleESP32.h>
 
 #include <Arduino.h>
 
-#define RightFrontFWD 12
-#define RightFrontBWD 13
-#define RightBackFWD 27
-#define RightBackBWD 26
+#define RightFrontBWD 12  //  INT4
+#define RightFrontFWD 13  //  INT3
+#define RightBackBWD  27  //  INT2
+#define RightBackFWD  26  //  INT1
 
-#define LeftFrontFWD 25
-#define LeftFrontBWD 33 
-#define LeftBackFWD 32
-#define LeftBackBWD 23
+#define LeftFrontBWD  25  //  INT4
+#define LeftFrontFWD  33  //  INT3
+#define LeftBackBWD   32  //  INT2
+#define LeftBackFWD   23  //  INT1
 
-#define LeftStartLevel 104
+#define LeftStartLevel  104
 #define RightStartLevel 104
 
 // #define led_pin 33
 
 int motorspeed = 128;
+
+int v_left_front_Old;
+int v_left_back_Old;
+int v_right_front_Old;
+int v_right_back_Old;
 
 int v_left_front;
 int v_left_back;
@@ -29,21 +34,22 @@ int v_right_front;
 int v_right_back;
 
 unsigned long LastSpeedChangeTimeInMs = 0;
+unsigned long LastSpeedCommandReceivedInMs = 0;
 String Serial1InputString = "";          // a String to hold incoming data
 char Serial1InputBytes[20];
 byte Serial1InputPos = 0;
 bool Serial1InputComplete = false;     // whether the string is complete
 
-// #define RXD2 21     //  Color: Blue    ESP32 Pin 21   Jetson Nano Pin 8  
-// #define TXD2 22     //  Color: White   ESP32 Pin 22   Jetson Nano Pin 10
+#define RXD2 21     //  Color: Blue    ESP32 Pin 21   Jetson Nano Pin 8  
+#define TXD2 22     //  Color: White   ESP32 Pin 22   Jetson Nano Pin 10
 
-#define RXD2 16     //  Color: Blue    ESP32 Pin 21   Jetson Nano Pin 8 
-#define TXD2 17     //  Color: White   ESP32 Pin 22   Jetson Nano Pin 10
+// #define RXD2 16     //  Color: Blue    ESP32 Pin 21   Jetson Nano Pin 8 
+// #define TXD2 17     //  Color: White   ESP32 Pin 22   Jetson Nano Pin 10
 
 
 void setup() {
   // pinMode(led_pin, OUTPUT);
-  pinMode(LED_BUILTIN, OUTPUT);
+  // pinMode(LED_BUILTIN, OUTPUT);
 
   pinMode(RightFrontFWD, OUTPUT);
   analogWrite(RightFrontFWD, 0);
@@ -76,9 +82,72 @@ void setup() {
 //  Dabble.begin("MyEsp32");       //set bluetooth name of your device
 
   LastSpeedChangeTimeInMs = millis();
+  LastSpeedCommandReceivedInMs = LastSpeedChangeTimeInMs;
 }
 
 void loop() {
+  unsigned long NowInMs = millis();
+
+  ReadSerial0CommandInput();
+
+  if ( (NowInMs - LastSpeedCommandReceivedInMs) > 5000 ) {
+    v_left_front = 0;
+    v_left_back = 0;
+    v_right_front = 0;
+    v_right_back = 0;    
+  }
+
+  if ( v_left_front != v_left_front_Old ) {
+    v_left_front_Old = v_left_front;
+
+    if ( v_left_front > 0 ) {
+      analogWrite(LeftFrontFWD, v_left_front);
+      analogWrite(LeftFrontBWD, 0);      
+    }
+    else {
+      analogWrite(LeftFrontFWD, 0);
+      analogWrite(LeftFrontBWD, -v_left_front);      
+    }    
+  }
+
+  if ( v_left_back != v_left_back_Old ) {
+    v_left_back_Old = v_left_back;
+
+    if ( v_left_back > 0 ) {
+      analogWrite(LeftBackFWD, v_left_back);
+      analogWrite(LeftBackBWD, 0);      
+    }
+    else {
+      analogWrite(LeftBackFWD, 0);
+      analogWrite(LeftBackBWD, -v_left_back);      
+    }
+  }
+  
+  if ( v_right_front != v_right_front_Old ) {
+    v_right_front_Old = v_right_front;
+
+    if ( v_right_front > 0 ) {
+      analogWrite(RightFrontFWD, v_right_front);
+      analogWrite(RightFrontBWD, 0);      
+    }
+    else {
+      analogWrite(RightFrontFWD, 0);
+      analogWrite(RightFrontBWD, -v_right_front);      
+    }
+  }
+
+  if ( v_right_back != v_right_back_Old ) {
+    v_right_back_Old = v_right_back;
+
+    if ( v_right_back > 0 ) {
+      analogWrite(RightBackFWD, v_right_back);
+      analogWrite(RightBackBWD, 0);      
+    }
+    else {
+      analogWrite(RightBackFWD, 0);
+      analogWrite(RightBackBWD, -v_right_back);      
+    }
+  }
 
 /*
   analogWrite(RightFrontFWD, motorspeed);
@@ -127,77 +196,6 @@ void loop() {
 
   return;
 */
-
-  ReadSerial0CommandInput();
-
-
-  /*
-  //this function is used to refresh data obtained from smartphone.Hence calling this function is mandatory in order to get data properly from your mobile.
-  Dabble.processInput();
-  // Serial.print("KeyPressed: ");
-  if (GamePad.isUpPressed())
-  {
-    Serial.print("Up");
-    moveForward();
-  } else if (GamePad.isDownPressed())
-  {
-    Serial.print("Down");
-    moveBackward();
-  } else if (GamePad.isLeftPressed())
-  {
-    Serial.print("Left");
-    rotateLeft();
-  } else if (GamePad.isRightPressed())
-  {
-    Serial.print("Right");
-    rotateRight();
-  } else if (GamePad.isCrossPressed())
-  {
-    if ( millis() - LastSpeedChangeTimeInMs > 1000 ) {
-      LastSpeedChangeTimeInMs = millis();
-      motorspeed += 8;
-      if ( motorspeed >= 250 )
-        motorspeed = 250;
-      Serial.print("Cross ");
-      Serial.print("speed=");
-      Serial.println(motorspeed);
-    }
-  } else if (GamePad.isTrianglePressed())
-  {
-    if ( millis() - LastSpeedChangeTimeInMs > 1000 ) {
-      LastSpeedChangeTimeInMs = millis();
-      motorspeed -= 8;
-      if ( motorspeed <= 0 )
-        motorspeed = 0;
-      Serial.print("Triangle ");
-      Serial.print("speed=");
-      Serial.println(motorspeed);
-    }
-  } else
-  {
-    stopMoving();
-  }
-  */
-  
-/*  
-  Serial.print('\t');
-  int a = GamePad.getAngle();
-  Serial.print("Angle: ");
-  Serial.print(a);
-  Serial.print('\t');
-  int b = GamePad.getRadius();
-  Serial.print("Radius: ");
-  Serial.print(b);
-  Serial.print('\t');
-  float c = GamePad.getXaxisData();
-  Serial.print("x_axis: ");
-  Serial.print(c);
-  Serial.print('\t');
-  float d = GamePad.getYaxisData();
-  Serial.print("y_axis: ");
-  Serial.println(d);
-  Serial.println();
-*/  
 }
 
 void moveForward() {
@@ -260,7 +258,6 @@ void stopMoving() {
   analogWrite(LeftBackBWD, 0);
 }
 
-
 void moveSidewaysRight() {
   analogWrite(RightFrontFWD, 0);
   analogWrite(RightFrontBWD, motorspeed);
@@ -310,12 +307,13 @@ void moveLeftForward() {
 }
 
 
-
 /*
  * Return value:  True  => a valid serial command has been received
  *                False => no valid serial command has been received yet. 
  */
 void ReadSerial0CommandInput(){
+  int TmpInt;
+  
   while (Serial1.available()) {
     // get the new byte:
     char inChar = (char)Serial1.read();
@@ -369,37 +367,46 @@ void ReadSerial0CommandInput(){
           Serial1InputPos = 0;
           return;
         }
+
+        // target value range -255 0 +255
+        // actual value range 1 256 511
+        
         c2 = Serial1InputBytes[1];
-        v_left_front = c2 << 7;
+        TmpInt = c2 << 7;
         c2 = Serial1InputBytes[2];
-        v_left_front += c2;
+        TmpInt += c2;
+        v_left_front = TmpInt - 256;
 
         c2 = Serial1InputBytes[3];
-        v_left_back = c2 << 7;
+        TmpInt = c2 << 7;
         c2 = Serial1InputBytes[4];
-        v_left_back += c2;
+        TmpInt += c2;
+        v_left_back = TmpInt - 256;
 
         c2 = Serial1InputBytes[5];
-        v_right_front = c2 << 7;
+        TmpInt = c2 << 7;
         c2 = Serial1InputBytes[6];
-        v_right_front += c2;
+        TmpInt += c2;
+        v_right_front = TmpInt - 256;
 
         c2 = Serial1InputBytes[7];
-        v_right_back = c2 << 7;
+        TmpInt = c2 << 7;
         c2 = Serial1InputBytes[8];
-        v_right_back += c2;
+        TmpInt += c2;
+        v_right_back = TmpInt - 256;
 
-        Serial.print(" lf=");
-        Serial.print(v_left_front);
-        Serial.print(" lb=");
-        Serial.print(v_left_back);
-        Serial.print(" rf=");
-        Serial.print(v_right_front);
-        Serial.print(" rb=");
-        Serial.println(v_right_back);
+//        Serial.print(" lf=");
+//        Serial.print(v_left_front);
+//        Serial.print(" lb=");
+//        Serial.print(v_left_back);
+//        Serial.print(" rf=");
+//        Serial.print(v_right_front);
+//        Serial.print(" rb=");
+//        Serial.println(v_right_back);
 
-        digitalWrite(LED_BUILTIN, !digitalRead(LED_BUILTIN));
-        // digitalWrite(led_pin, !digitalRead(led_pin));
+//        digitalWrite(led_pin, !digitalRead(led_pin));
+
+        LastSpeedCommandReceivedInMs = millis();
         break;
 
       case 'S':
@@ -428,7 +435,6 @@ void ReadSerial0CommandInput(){
     Serial1InputString = "";
   }
 }
-
 
 void setMecanumDrive(double translationAngle, double translationPower, double turnPower)
 {
