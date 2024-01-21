@@ -1,0 +1,47 @@
+﻿@{
+    ViewBag.Title = "Home Page";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@using CRM.GlobalResources
+
+<div>
+    <div class="row wrapper border-bottom white-bg page-heading">
+        <h2 style="float:left">@ViewBag.Message</h2>
+    </div>
+
+    <form class="m-t" role="form" method="post">
+        <div>
+            <label id="lblPre">Test Name</label>
+            <div><input id="txtPre" type="text" class="form-control" name="txtPre" placeholder="Pre Stays"></div>
+        </div>
+        <div>
+            <label id="lblPost">Number of Students</label>
+            <div><input id="txtPost" type="text" class="form-control" name="txtPost" placeholder="Post Stays"></div>
+        </div>
+
+        <div style="margin-top:24px">
+            <img src="~/Content/images/Math_601.png" />
+            <button class="btn btn-primary" style="margin-left:24px; margin-top:24px; vertical-align:top" type="submit" name="del" value="1">Remove</button>
+        </div>
+        <div style="margin-top:24px">
+            <img src="~/Content/images/Math_602.png" />
+            <button class="btn btn-primary" style="margin-left:24px; margin-top:24px; vertical-align:top" type="submit" name="del" value="2">Remove</button>
+        </div>
+
+        <div style="margin-top:24px">
+            <img src="~/Content/images/Math_601.png" />
+            <button class="btn btn-primary" style="margin-left:24px; margin-top:24px; vertical-align:top" type="submit" name="del" value="3">Remove</button>
+        </div>
+        <div style="margin-top:24px">
+            <img src="~/Content/images/Math_602.png" />
+            <button class="btn btn-primary" style="margin-left:24px; margin-top:24px; vertical-align:top" type="submit" name="del" value="4">Remove</button>
+        </div>
+
+        <div>
+            <button class="btn btn-primary" style="margin-left:120px;" type="submit" name="Confirm" value="1">Confirm</button>
+        </div>
+        <div style="margin-top:24px">
+            <img src="~/Content/images/White_40x125.png" />
+        </div>
+    </form>
+</div>

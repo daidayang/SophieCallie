@@ -1,0 +1,25 @@
+﻿@{
+    ViewBag.Title = "Home Page";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@using CRM.GlobalResources
+
+<div>
+    <div class="row wrapper border-bottom white-bg page-heading">
+        <h2 style="float:left">@ViewBag.Message</h2>
+    </div>
+
+    <div style="margin-top:24px">
+        <label id="lblPre">Test Name</label>
+        <div><input id="txtPre" type="text" class="form-control" name="txtPre" placeholder="Pre Stays"></div>
+    </div>
+    <div>
+        <label id="lblPost">Number of Students</label>
+        <div><input id="txtPost" type="text" class="form-control" name="txtPost" placeholder="Post Stays"></div>
+    </div>
+
+    <div style="margin-top:24px">
+        <img src="~/Content/images/pdf.png" style="width:64px; margin-left:120px" />
+        <label id="lblPost">Please download the AI generated tests</label>
+    </div>
+</div>

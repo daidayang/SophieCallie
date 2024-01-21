@@ -1,0 +1,30 @@
+﻿#btnAddGuest {
+    margin-left:5px!important;
+}
+
+#divRdo {
+    margin-top:0px;
+}
+
+#divTarget div {width:105px; height:80px;padding:10px;border:1px solid #aaaaaa;float:left;}
+
+    #divTarget div.block {
+        color:red;
+    }
+
+       #divTarget div.none {
+        color:black;
+    }
+
+#divResvTarget div {width:105px; height:80px;padding:10px;border:1px solid #aaaaaa;float:left;}
+
+#divResvTarget div.block {
+color:red;
+}
+
+#divResvTarget div.none {
+color:black;
+}
+
+#divStagingArea div {width:100%; height:80px;padding:10px;border:1px solid #aaaaaa;float:left;}
+/*display: inline-block;*/
