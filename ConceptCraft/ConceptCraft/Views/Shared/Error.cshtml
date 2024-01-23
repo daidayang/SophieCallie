@@ -1,16 +1,15 @@
 ﻿
-@using CRM.GlobalResources
 <!DOCTYPE html>
 <html>
 <head>
     <meta name="viewport" content="width=device-width" />
-    <title>@Common.ErrorPage</title>
+    <title>"ErrorPage""</title>
 </head>
 <body>
     <hgroup>
-        <h1>@Common.ErrorPage.</h1>
+        <h1>"ErrorPage".</h1>
         @ViewContext.RouteData.Values["error"]
-        <h2>@Common.ErrorContent</h2>
+        <h2>"ErrorContent"</h2>
         @ViewContext.RouteData.Values["trace"]
     </hgroup>
 </body>

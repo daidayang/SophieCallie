@@ -1,25 +1,13 @@
 ﻿using CRM.BusinessEntities;
+using CRM.BusinessLogic;
+using CRMAdmin.Helper;
+using CRMAdmin.Models;
 using System;
-using System.Collections.Generic;
-using System.Linq;
+using System.Text;
 using System.Web;
 using System.Web.Mvc;
-using CRM.BusinessLogic;
 using System.Web.Security;
-using CRMAdmin.Helper;
-using System.Net.Mail;
-using System.Text;
-using System.Threading;
-using System.Globalization;
-using CRMAdmin.Models;
-// using CRM.GlobalResources;
-using System.Web.Script.Serialization;
-using Newtonsoft.Json.Linq;
-using System.Configuration;
-using System.Threading.Tasks;
 // using CRM.Utility;
-using Antlr.Runtime.Misc;
-using System.Management.Instrumentation;
 
 namespace CRMAdmin.Controllers
 {

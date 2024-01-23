@@ -1,4 +1,4 @@
-﻿@using CRM.GlobalResources;
+﻿;
 @{
     Layout = null;
 }
@@ -8,7 +8,7 @@
 <html>
 <head>
     <meta name="viewport" content="width=device-width" />
-    <title>@Login.LoginIN</title>
+    <title>Login</title>
     @Styles.Render("~/Main/css")
     <link href="~/Content/dev/Account/login.css?v=@ViewBag.BuildVersion" rel="stylesheet">
 </head>
@@ -28,20 +28,20 @@
             </div>
             <form class="m-t" role="form" method="post">
                 <div class="form-group">
-                    <input type="text" class="form-control" placeholder="@Login.UserName" required="" value="@TempData["username"]" name="username" id="username">
+                    <input type="text" class="form-control" placeholder="UserName" required="" value="@TempData["username"]" name="username" id="username">
                 </div>
                 <div class="form-group">
-                    <input type="password" class="form-control" placeholder="@Login.Password" required="" name="password" id="password">
+                    <input type="password" class="form-control" placeholder="Password" required="" name="password" id="password">
                 </div>
-                <button type="submit" class="btn btn-primary block full-width m-b">@Login.LoginIN</button>
-                <a href="~/Account/EmailPwd"><small>@Login.ForgotYour</small></a>
+                <button type="submit" class="btn btn-primary block full-width m-b">Login</button>
+                <a href="~/Account/EmailPwd"><small>Forgot Your Password</small></a>
                 <span class="hide">@string.Format("{0}://{1}{2}", Request.Url.Scheme, Request.Url.Authority, Url.Content("~"))</span>
             </form>
         </div>
     </div>
-    <input type="hidden" id="hidRequired" value="@Common.Required"/>
-    <input type="hidden" id="hidUserName" value="@Login.UserName" />
-    <input type="hidden" id="hidPassword" value="@Login.Password" />
+    <input type="hidden" id="hidRequired" value="Required"/>
+    <input type="hidden" id="hidUserName" value="UserName" />
+    <input type="hidden" id="hidPassword" value="Password" />
 
     <script type="text/javascript" src="~/Scripts/jquery-2.1.1.js"></script>
     <script type="text/javascript" src="~/Scripts/bootstrap.min.js"></script>
