@@ -27,7 +27,7 @@ namespace CRMAdmin.Helper
 
             currentUser.FieldID = 1;
             currentUser.FieldType = 1;
-            currentUser.FieldName = "ddaiAdmin";
+            currentUser.FieldName = "testtest";
             //currentUser.Access = UserResult.Access;
             currentUser.Email = "Email";
             currentUser.Locale = "Locale";

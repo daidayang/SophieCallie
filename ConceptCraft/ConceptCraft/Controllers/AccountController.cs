@@ -99,7 +99,7 @@ namespace CRMAdmin.Controllers
                 //InputFormFieldsInfo userResult = dalInputFormFields.UserLogin(username.Trim(), pwdEncrypted, ip);
                 InputFormFieldsInfo userResult = new InputFormFieldsInfo();
                 userResult.Active = true;
-                userResult.FieldName = "ddaiadmin";
+                userResult.FieldName = "testtest";
                 if (userResult != null && userResult.Active)
                 {
                     // save current user and set cookie
@@ -136,7 +136,7 @@ namespace CRMAdmin.Controllers
 
                     if (string.IsNullOrEmpty(returnUrl))
                     {
-                        return Redirect("~/Home/Index");
+                        return Redirect("~/Test/PastTests");
                     }
                     if (Url.IsLocalUrl(returnUrl))
                     {
@@ -276,8 +276,6 @@ namespace CRMAdmin.Controllers
             currentUser.MySqlConnstring = accountInfo.MYSQLConnString;
             SimpleSessionPersister.CurrentUser = currentUser;
             #endregion
-
-
         }
     }
 }

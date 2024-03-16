@@ -15,6 +15,13 @@ namespace CRMAdmin.Controllers
         {
             ViewBag.Message = "7th Grade, Math Topics";
 
+            if (Session["cart"] == null)
+            {
+                Session["cart"] = new List<int>();
+                Session["cart"] = new List<int>();
+            }
+
+
             return View();
         }
 
@@ -51,6 +58,13 @@ namespace CRMAdmin.Controllers
         public ActionResult Scores()
         {
             ViewBag.Message = "Test Score Summary";
+
+            return View();
+        }
+
+        public ActionResult PastTests()
+        {
+            ViewBag.Message = "Past Tests";
 
             return View();
         }

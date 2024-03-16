@@ -37,31 +37,29 @@
                             </a>
                             <ul class="dropdown-menu animated fadeInRight m-t-xs">
                                 <li><a href="">Profile</a></li>
-                                <li><a href="">Contacts</a></li>
-                                <li><a href="">Mailbox</a></li>
                                 <li class="divider"></li>
                                 <li><a href="~/Account/Logout">Logout</a></li>
                             </ul>
                         </div>
                         <div class="logo-element">
-                            CRM
+                            CC
                         </div>
                     </li>
                     @*<li id="liDashboard">
-                            <a href="#"><i class="fa fa-th-large"></i> <span class="nav-label">@Navigation.Dashboard</span></a>
-                        </li>*@
-                    <li id="liCampaignManagementTools">
+            <a href="#"><i class="fa fa-th-large"></i> <span class="nav-label">@Navigation.Dashboard</span></a>
+        </li>*@
+                    <li id="liSartNewTest">
                         <a href="#"><i class="fa fa-clock-o"></i> <span class="nav-label">Start New Test</span> <span class="fa arrow"></span></a>
                         <ul class="nav nav-second-level collapse">
                             <li id="liMauticComponents">
-                                <a href="#"><i class="fa fa-puzzle-piece"></i> <span class="nav-label">9th Grade</span><span class="fa arrow"></span></a>
+                                <a href="#"><i class="fa fa-puzzle-piece"></i> <span class="nav-label">7th Grade</span><span class="fa arrow"></span></a>
                                 <ul class="nav nav-third-level collapse">
                                     <li id="liAssets"><a href="~/Test/Topics?Grade=9&Subject=Math">Math</a></li>
                                     <li id="liForms"><a href="~/Test/Topics?Grade=9&Subject=Physics">Pyhsics</a></li>
                                 </ul>
                             </li>
                             <li id="liMauticChannels">
-                                <a href="#"><i class="fa fa-rss"></i> <span class="nav-label">10th Grade</span><span class="fa arrow"></span></a>
+                                <a href="#"><i class="fa fa-rss"></i> <span class="nav-label">8th Grade</span><span class="fa arrow"></span></a>
                                 <ul class="nav nav-third-level collapse">
                                     <li id="liAssets"><a href="~/Test/Topics?Grade=10&Subject=Math">Math</a></li>
                                     <li id="liForms"><a href="~/Test/Topics?Grade=10&Subject=Math">Pyhsics</a></li>
@@ -70,8 +68,12 @@
                         </ul>
                     </li>
 
-                    <li id="liMauticCampaign">
+                    <li id="liSubmitTestResults">
                         <a href="~/Test/UploadAnswer"><i class="fa fa-clock-o"></i> <span class="nav-label">Submit Test Results</span></a>
+                    </li>
+
+                    <li id="liPastTests">
+                        <a href="~/Test/PastTests"><i class="fa fa-clock-o"></i> <span class="nav-label">Past Tests</span></a>
                     </li>
 
                     <li id="liSchool">
@@ -96,12 +98,6 @@
             <div class="row">
                 <nav class="navbar navbar-static-top" role="navigation" style="margin-bottom: 0">
                     <div class="navbar-header">
-@*                        <a class="navbar-minimalize minimalize-styl-2" href="#"><i class="fa fa-bars"></i> </a>*@
-                        @*<form role="search" class="navbar-form-custom" action="~/GlobalQuery/Index">
-                            <div class="form-group">
-                                <input type="text" placeholder="SearchForSth" class="form-control" name="top-search" id="top-search" value="@ViewBag.TopSearchName">
-                            </div>
-                        </form>*@
                     </div>
 
                     <ul class="nav navbar-top-links navbar-right">
@@ -124,30 +120,6 @@
                             </div>
                         </li>
                     </ul>
-
-                    @if (SimpleSessionPersister.CurrentUser.UserLevel_Enum == UserLevelEnum.SystemLevel)
-                    {
-                        <div class="nav navbar-top-links">
-                            <form id="formChangeClient" role="form" class="navbar-form-custom" action="~/Account/SuperUserChangeClient">
-                                <select id="ClientDropDown" name="ClientDropDown" class="form-control">
-                                    @foreach (var ClientInfo in SimpleSessionPersister.CurrentUser.Clients)
-                                    {
-                                        if (ClientInfo.ClientID == SimpleSessionPersister.CurrentUser.ClientID)
-                                        {
-                                            <option value="@ClientInfo.ClientID" data="@ClientInfo.ClusterDB" selected>@ClientInfo.Name</option>
-                                        }
-                                        else
-                                        {
-                                            <option value="@ClientInfo.ClientID" data="@ClientInfo.ClusterDB">@ClientInfo.Name</option>
-                                        }
-                                    }
-
-                                </select>
-                                <input type="hidden" value="" name="requestUrl" id="requestUrl" />
-                            </form>
-                        </div>
-
-                    }
                 </nav>
             </div>
             @RenderBody()

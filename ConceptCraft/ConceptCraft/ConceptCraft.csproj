@@ -228,7 +228,6 @@
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\ErrorController.cs" />
-    <Compile Include="Controllers\GeneralController.cs" />
     <Compile Include="Controllers\TestController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Global.asax.cs">
@@ -376,6 +375,7 @@
     <Content Include="Content\images\profile_small_dmoneo.jpg" />
     <Content Include="Content\images\shr-logo-final-orange-grey_33x33.png" />
     <Content Include="Content\images\shr-logo-final-orange-grey_44x44.png" />
+    <Content Include="Content\images\shr-logo-final-orange-grey_logo.png" />
     <Content Include="Content\images\shr-logo-final-white_44x44.png" />
     <Content Include="Content\images\shr-logo.svg" />
     <Content Include="Content\images\shr-logo2.svg" />
@@ -439,9 +439,7 @@
     <Content Include="Scripts\dev\Account\emailpwd.js" />
     <Content Include="Scripts\dev\Account\login.js" />
     <Content Include="Scripts\dev\Account\modifypwd.js" />
-    <Content Include="Scripts\dev\general\index.js" />
     <Content Include="Scripts\dev\home\Index.js" />
-    <Content Include="Scripts\dev\log\list.js" />
     <Content Include="Scripts\dev\navigation.js" />
     <Content Include="Scripts\dev\pageSelect.js" />
     <Content Include="Scripts\dev\site.js" />
@@ -911,13 +909,13 @@
     <Content Include="Scripts\plugins\chartist\chartist.min.js.map" />
     <Content Include="Scripts\plugins\diff_match_patch\COPYING" />
     <Content Include="Scripts\plugins\justified-gallery\README.md" />
-    <Content Include="Views\General\Index.cshtml" />
     <Content Include="Views\Test\Topics.cshtml" />
     <Content Include="Views\Test\Questions.cshtml" />
     <Content Include="Views\Test\Review.cshtml" />
     <Content Include="Views\Test\Download.cshtml" />
     <Content Include="Views\Test\UploadAnswer.cshtml" />
     <Content Include="Views\Test\Scores.cshtml" />
+    <Content Include="Views\Test\PastTests.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -971,7 +969,7 @@
           <AutoAssignPort>True</AutoAssignPort>
           <DevelopmentServerPort>55417</DevelopmentServerPort>
           <DevelopmentServerVPath>/</DevelopmentServerVPath>
-          <IISUrl>http://localhost:55417</IISUrl>
+          <IISUrl>http://localhost:55416</IISUrl>
           <NTLMAuthentication>False</NTLMAuthentication>
           <UseCustomServer>False</UseCustomServer>
           <CustomServerUrl>
