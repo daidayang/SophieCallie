@@ -13,7 +13,14 @@ html {
     min-height: 100%;
 }
 
+div {
+    text-align: center;
+    padding:10px;
+}
 
+.login-content{
+    background-color: black;
+}
 /* style.css */
 body {
     background-color: #f0f0f0;
