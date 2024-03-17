@@ -5,11 +5,21 @@ using MySql.Data.MySqlClient;
 using MySqlX.XDevAPI;
 using Microsoft.AspNetCore.Http;
 
+using MyTime.Models; // Use the correct namespace for your model
+
 namespace MyTime.Controllers
 {
     public class HomeController : Controller
     {
         private string connectionString = "server=mytimedb;database=MyTime;uid=mytime;pwd=mytime123;";
+
+        private List<TimeLeft> tasks = new List<TimeLeft>
+    {
+        new TimeLeft { Name = "Task 1", TimeLeftInMin = 90, State = true },
+        new TimeLeft { Name = "Task 2", TimeLeftInMin = 60, State = false },
+        // Add more tasks as needed
+    };
+
 
         private readonly ILogger<HomeController> _logger;
 
@@ -18,9 +28,36 @@ namespace MyTime.Controllers
             _logger = logger;
         }
 
-        public IActionResult Index()
+        [HttpGet]
+        public ActionResult Index()
         {
-            return View();
+            var model = new TimeLeftTaskView
+            {
+                Tasks = tasks,
+                SelectedTaskId = tasks[0].Name
+            };
+            return View(model);
+        }
+
+        [HttpPost]
+        public ActionResult Index(string selectedTaskId, string action)
+        {
+            var model = new TimeLeftTaskView
+            {
+                Tasks = tasks,
+                SelectedTaskId = selectedTaskId
+            };
+
+            if (action == "toggleState")
+            {
+                var selectedTask = tasks.FirstOrDefault(t => t.Name == selectedTaskId);
+                if (selectedTask != null)
+                {
+                    selectedTask.State = !selectedTask.State;
+                }
+            }
+
+            return View(model);
         }
 
         public IActionResult Privacy()
@@ -56,6 +93,19 @@ namespace MyTime.Controllers
                 return View(user);
             }
         }
+
+        public ActionResult SelectObject()
+        {
+            List<TimeLeft> objects = new List<TimeLeft>
+            {
+                new TimeLeft { Name = "Games", TimeLeftInMin = 30 },
+                new TimeLeft { Name = "Videos", TimeLeftInMin = 45 }
+            };
+
+            ViewBag.ObjectList = objects;
+            return View();
+        }
+
 
         private bool IsValidUser(UserLogin user)
         {

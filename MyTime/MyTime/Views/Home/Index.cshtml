@@ -1,8 +1,22 @@
-﻿@{
-    ViewData["Title"] = "Home Page";
+﻿@model MyTime.Models.TimeLeftTaskView
+@{
+    ViewBag.Title = "Task Selector";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
-</div>
+<h2>Select a Task</h2>
+
+@using (Html.BeginForm("Index", "Home", FormMethod.Post, new { id = "taskForm" }))
+{
+    @Html.DropDownListFor(m => m.SelectedTaskId,
+                new SelectList(Model.Tasks, "Name", "Name"),
+                "Select a Task",
+                new { @onchange = "document.getElementById('taskForm').submit();" })
+
+    <label>Time Left: @Model.SelectedTask?.TimeLeftInMin minutes</label>
+
+    <button type="submit" name="action" value="toggleState">
+        @Model.ButtonText
+    </button>
+}
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>

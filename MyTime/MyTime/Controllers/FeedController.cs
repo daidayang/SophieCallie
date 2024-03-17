@@ -3,6 +3,8 @@ using MyTime.Models;
 using System.Diagnostics;
 using MySql.Data.MySqlClient;
 
+using MyTime.Models; // Use the correct namespace for your model
+
 namespace MyTime.Controllers
 {
     public class FeedController : Controller
@@ -15,23 +17,16 @@ namespace MyTime.Controllers
             _logger = logger;
         }
 
-        public IActionResult Index()
+
+        public ActionResult SelectObject()
         {
-                        using (var connection = new MySqlConnection(connectionString))
+            List<TimeLeft> objects = new List<TimeLeft>
             {
-                connection.Open();
-                var query = "SELECT COUNT(1) FROM Logins WHERE Username = @Username AND Password = @Password";
+                new TimeLeft { Name = "Games", TimeLeftInMin = 30 },
+                new TimeLeft { Name = "Videos", TimeLeftInMin = 45 }
+            };
 
-                using (var command = new MySqlCommand(query, connection))
-                {
-                    command.Parameters.AddWithValue("@Username", user.Username);
-                    command.Parameters.AddWithValue("@Password", user.Password); // In real applications, use hashed passwords
-
-                    var result = (long)command.ExecuteScalar();
-                    return result > 0;
-                }
-            }
-
+            ViewBag.ObjectList = objects;
             return View();
         }
     }
