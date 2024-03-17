@@ -2,12 +2,14 @@
 using MyTime.Models;
 using System.Diagnostics;
 using MySql.Data.MySqlClient;
+using MySqlX.XDevAPI;
+using Microsoft.AspNetCore.Http;
 
 namespace MyTime.Controllers
 {
     public class HomeController : Controller
     {
-        private string connectionString = "server=yourserver;database=yourdatabase;uid=yourusername;pwd=yourpassword;";
+        private string connectionString = "server=mytimedb;database=MyTime;uid=mytime;pwd=mytime123;";
 
         private readonly ILogger<HomeController> _logger;
 
@@ -57,19 +59,22 @@ namespace MyTime.Controllers
 
         private bool IsValidUser(UserLogin user)
         {
-            using (var connection = new MySqlConnection(connectionString))
+            using var connection = new MySqlConnection(connectionString);
+            connection.Open();
+            var query = "SELECT UserID FROM Users WHERE Username = @Username AND Password = @Password";
+
+            using (var command = new MySqlCommand(query, connection))
             {
-                connection.Open();
-                var query = "SELECT COUNT(1) FROM Logins WHERE Username = @Username AND Password = @Password";
+                command.Parameters.AddWithValue("@Username", user.Username);
+                command.Parameters.AddWithValue("@Password", user.Password); // In real applications, use hashed passwords
 
-                using (var command = new MySqlCommand(query, connection))
-                {
-                    command.Parameters.AddWithValue("@Username", user.Username);
-                    command.Parameters.AddWithValue("@Password", user.Password); // In real applications, use hashed passwords
+                var result = command.ExecuteScalar();
+                if (result == null)
+                    return false;
 
-                    var result = (long)command.ExecuteScalar();
-                    return result > 0;
-                }
+                HttpContext.Session.SetInt32("UserID", (int)result);
+                int? value = HttpContext.Session.GetInt32("UserID");
+                return true;
             }
         }
     }
