@@ -18,6 +18,10 @@ div {
     padding:10px;
 }
 
+.navbar-brand{
+    text-align:center;
+}
+
 .login-content{
     background-color: black;
 }
