@@ -13,14 +13,6 @@ namespace MyTime.Controllers
     {
         private string connectionString = "server=mytimedb;database=MyTime;uid=mytime;pwd=mytime123;";
 
-        private List<TimeLeft> tasks = new List<TimeLeft>
-    {
-        new TimeLeft { Name = "Task 1", TimeLeftInMin = 90, State = true },
-        new TimeLeft { Name = "Task 2", TimeLeftInMin = 60, State = false },
-        // Add more tasks as needed
-    };
-
-
         private readonly ILogger<HomeController> _logger;
 
         public HomeController(ILogger<HomeController> logger)
@@ -31,6 +23,9 @@ namespace MyTime.Controllers
         [HttpGet]
         public ActionResult Index()
         {
+            int ? userid = HttpContext.Session.GetInt32("UserID");
+            List<TimeLeft> tasks = GetFreeTime((int)userid);
+
             var model = new TimeLeftTaskView
             {
                 Tasks = tasks,
@@ -42,6 +37,9 @@ namespace MyTime.Controllers
         [HttpPost]
         public ActionResult Index(string selectedTaskId, string action)
         {
+            int? userid = HttpContext.Session.GetInt32("UserID");
+            List<TimeLeft> tasks = GetFreeTime((int)userid);
+
             var model = new TimeLeftTaskView
             {
                 Tasks = tasks,
@@ -94,17 +92,20 @@ namespace MyTime.Controllers
             }
         }
 
-        public ActionResult SelectObject()
-        {
-            List<TimeLeft> objects = new List<TimeLeft>
-            {
-                new TimeLeft { Name = "Games", TimeLeftInMin = 30 },
-                new TimeLeft { Name = "Videos", TimeLeftInMin = 45 }
-            };
+        //public ActionResult SelectObject()
+        //{
+        //    int? userid = HttpContext.Session.GetInt32("UserID");
+        //    if ( userid != null)
+        //        ViewBag.ObjectList = GetFreeTime((int)userid);
 
-            ViewBag.ObjectList = objects;
-            return View();
-        }
+        //    //List<TimeLeft> objects = new List<TimeLeft>
+        //    //{
+        //    //    new TimeLeft { Name = "Games", TimeLeftInMin = 30 },
+        //    //    new TimeLeft { Name = "Videos", TimeLeftInMin = 45 }
+        //    //};
+
+        //    return View();
+        //}
 
 
         private bool IsValidUser(UserLogin user)
@@ -126,6 +127,37 @@ namespace MyTime.Controllers
                 int? value = HttpContext.Session.GetInt32("UserID");
                 return true;
             }
+        }
+
+        private List<TimeLeft> GetFreeTime(int userid)
+        {
+            List<TimeLeft> ret = null;
+
+            using var connection = new MySqlConnection(connectionString);
+            connection.Open();
+            var query = "usp_GetTimeLeft";
+
+            using (var command = new MySqlCommand(query, connection))
+            {
+                command.CommandType = System.Data.CommandType.StoredProcedure;
+                command.Parameters.AddWithValue("arg_ID", userid);
+
+                using var result = command.ExecuteReader();
+                while (result.Read())
+                {
+                    ret ??= new List<TimeLeft>();
+
+                    TimeLeft rl = new()
+                    {
+                        Name = result.GetString(0),
+                        TimeLeftInMin = result.GetInt32(1),
+                        State = result.GetBoolean(2)
+                    };
+                    ret.Add(rl);
+                }
+            }
+
+            return ret;
         }
     }
 }
