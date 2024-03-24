@@ -40,20 +40,22 @@ namespace MyTime.Controllers
             int? userid = HttpContext.Session.GetInt32("UserID");
             List<TimeLeft> tasks = GetFreeTime((int)userid);
 
-            var model = new TimeLeftTaskView
-            {
-                Tasks = tasks,
-                SelectedTaskId = selectedTaskId
-            };
-
             if (action == "toggleState")
             {
                 var selectedTask = tasks.FirstOrDefault(t => t.TypeID.ToString() == selectedTaskId);
                 if (selectedTask != null)
                 {
-                    selectedTask.State = !selectedTask.State;
+                    SetRunState((int)userid, selectedTask.TypeID, !selectedTask.State);
+                    // selectedTask.State = !selectedTask.State;
+                    tasks = GetFreeTime((int)userid);
                 }
             }
+
+            var model = new TimeLeftTaskView
+            {
+                Tasks = tasks,
+                SelectedTaskId = selectedTaskId
+            };
 
             return View(model);
         }
@@ -91,22 +93,6 @@ namespace MyTime.Controllers
                 return View(user);
             }
         }
-
-        //public ActionResult SelectObject()
-        //{
-        //    int? userid = HttpContext.Session.GetInt32("UserID");
-        //    if ( userid != null)
-        //        ViewBag.ObjectList = GetFreeTime((int)userid);
-
-        //    //List<TimeLeft> objects = new List<TimeLeft>
-        //    //{
-        //    //    new TimeLeft { Name = "Games", TimeLeftInMin = 30 },
-        //    //    new TimeLeft { Name = "Videos", TimeLeftInMin = 45 }
-        //    //};
-
-        //    return View();
-        //}
-
 
         private bool IsValidUser(UserLogin user)
         {
@@ -159,6 +145,22 @@ namespace MyTime.Controllers
             }
 
             return ret;
+        }
+
+        private void SetRunState(int userid, int playTypeID, bool setToRun)
+        {
+            using var connection = new MySqlConnection(connectionString);
+            connection.Open();
+            var query = "usp_ToggleState";
+
+            using (var command = new MySqlCommand(query, connection))
+            {
+                command.CommandType = System.Data.CommandType.StoredProcedure;
+                command.Parameters.AddWithValue("arg_ID", userid);
+                command.Parameters.AddWithValue("arg_PlayTypeID", playTypeID);
+                command.Parameters.AddWithValue("arg_Play", setToRun);
+                command.ExecuteNonQuery();
+            }
         }
     }
 }
