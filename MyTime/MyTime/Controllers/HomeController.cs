@@ -23,7 +23,10 @@ namespace MyTime.Controllers
         [HttpGet]
         public ActionResult Index()
         {
-            int ? userid = HttpContext.Session.GetInt32("UserID");
+            int? userid = HttpContext.Session.GetInt32("UserID");
+            if (userid == null)
+                return RedirectToAction("login");
+
             List<TimeLeft> tasks = GetFreeTime((int)userid);
 
             var model = new TimeLeftTaskView
@@ -38,6 +41,9 @@ namespace MyTime.Controllers
         public ActionResult Index(string selectedTaskId, string action)
         {
             int? userid = HttpContext.Session.GetInt32("UserID");
+            if (userid == null)
+                return RedirectToAction("login");
+
             List<TimeLeft> tasks = GetFreeTime((int)userid);
 
             if (action == "toggleState")
@@ -137,7 +143,7 @@ namespace MyTime.Controllers
                     {
                         TypeID = result.GetInt32(0),
                         TypeName = result.GetString(1),
-                        TimeLeftInMin = result.GetInt32(2),
+                        TimeLeftInMin = result.GetInt32(2) / 60,
                         State = result.GetBoolean(3)
                     };
                     ret.Add(rl);

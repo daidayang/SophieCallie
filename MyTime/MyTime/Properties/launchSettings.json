@@ -3,7 +3,6 @@
     "MyTime": {
       "commandName": "Project",
       "launchBrowser": true,
-      "launchUrl": "home/Login",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       },
