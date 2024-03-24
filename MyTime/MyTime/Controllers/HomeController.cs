@@ -29,7 +29,7 @@ namespace MyTime.Controllers
             var model = new TimeLeftTaskView
             {
                 Tasks = tasks,
-                SelectedTaskId = tasks[0].Name
+                SelectedTaskId = tasks[0].TypeID.ToString()
             };
             return View(model);
         }
@@ -48,7 +48,7 @@ namespace MyTime.Controllers
 
             if (action == "toggleState")
             {
-                var selectedTask = tasks.FirstOrDefault(t => t.Name == selectedTaskId);
+                var selectedTask = tasks.FirstOrDefault(t => t.TypeID.ToString() == selectedTaskId);
                 if (selectedTask != null)
                 {
                     selectedTask.State = !selectedTask.State;
@@ -149,9 +149,10 @@ namespace MyTime.Controllers
 
                     TimeLeft rl = new()
                     {
-                        Name = result.GetString(0),
-                        TimeLeftInMin = result.GetInt32(1),
-                        State = result.GetBoolean(2)
+                        TypeID = result.GetInt32(0),
+                        TypeName = result.GetString(1),
+                        TimeLeftInMin = result.GetInt32(2),
+                        State = result.GetBoolean(3)
                     };
                     ret.Add(rl);
                 }

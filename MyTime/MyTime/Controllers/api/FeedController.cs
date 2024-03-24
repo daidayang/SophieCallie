@@ -5,6 +5,7 @@ using MySql.Data.MySqlClient;
 using MyTime.Models.api;
 using System.Text.Json;
 using Newtonsoft.Json;
+using MyTime.Models;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -27,35 +28,62 @@ namespace MyTime.Controllers.api
         [HttpGet("{id}")]
         public UsageControls Get(int id)
         {
-            UsageControl uc = new()
-            {
-                DateRanges = new List<DateRange>
-                {
-                    new()
-                    {
-                        DOW = MyDow.Monday | MyDow.Tuesday | MyDow.Wednesday | MyDow.Thursday | MyDow.Friday | MyDow.Saturday | MyDow.Sunday,
-                        TimeRanges = new List<TimeRange>
-                        {
-                            new()
-                            {
-                                StartHour = 0,
-                                StartMin = 0,
-                                EndHour = 23,
-                                EndMin = 59
-                            }
-                        }
-                    }
-                },
+            List<ControlItem> ctrls = null;
 
-                ControlItems = new List<ControlItem>
+            using var connection = new MySqlConnection(connectionString);
+            connection.Open();
+            var query = "usp_GetPlayItems";
+
+            using (var command = new MySqlCommand(query, connection))
+            {
+                command.CommandType = System.Data.CommandType.StoredProcedure;
+                command.Parameters.AddWithValue("arg_UserID", id);
+
+                using var result = command.ExecuteReader();
+                while (result.Read())
                 {
-                    new()
+
+                    int TimeLeft = result.GetInt32(4);
+                    Boolean InPlay = result.GetBoolean(5);
+
+                    if (!InPlay || TimeLeft <= 0)
                     {
-                        Identifier = "now.gg",
-                        Type = ControlItemType.WWW
+                        ctrls ??= new List<ControlItem>();
+                        ControlItem ci = new()
+                        {
+                            Type = (result.GetString(2) == "WWW") ? ControlItemType.WWW : ControlItemType.APP,
+                            Identifier = result.GetString(3)
+                        };
+                        ctrls.Add(ci);
                     }
                 }
-            };
+            }
+
+            UsageControl uc = null;
+            if (ctrls != null)
+            {
+                uc = new()
+                {
+                    DateRanges = new List<DateRange>
+                    {
+                        new()
+                        {
+                            DOW = MyDow.Monday | MyDow.Tuesday | MyDow.Wednesday | MyDow.Thursday | MyDow.Friday | MyDow.Saturday | MyDow.Sunday,
+                            TimeRanges = new List<TimeRange>
+                            {
+                                new()
+                                {
+                                    StartHour = 0,
+                                    StartMin = 0,
+                                    EndHour = 23,
+                                    EndMin = 59
+                                }
+                            }
+                        }
+                    },
+                    ControlItems = ctrls
+                };
+            }
 
             UsageControls ret = new()
             {

@@ -2,7 +2,8 @@
 {
     public class TimeLeft
     {
-        public string Name { get; set; }
+        public int TypeID { get; set; }
+        public string TypeName { get; set; }
         public int TimeLeftInMin { get; set; }
         public bool State { get; set; }
     }
