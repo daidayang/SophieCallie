@@ -26,49 +26,79 @@ namespace MyTime.Controllers.api
 
         // GET api/<FeedController>/5
         [HttpGet("{id}")]
-        public UsageControls Get(int id)
+        public UsageControls Get(string id)
         {
-            List<ControlItem> ctrls = null;
+            List<ControlItem> block_ctrls = null;
+            List<ControlItem> nonblock_ctrls = null;
 
             using var connection = new MySqlConnection(connectionString);
             connection.Open();
-            var query = "usp_GetPlayItems";
 
-            using (var command = new MySqlCommand(query, connection))
+            int tmpUserID = 0;
+            if (!int.TryParse(id, out tmpUserID))
             {
-                command.CommandType = System.Data.CommandType.StoredProcedure;
-                command.Parameters.AddWithValue("arg_UserID", id);
-
-                using var result = command.ExecuteReader();
-                while (result.Read())
+                using (var command = new MySqlCommand("usp_GetUserIDByUsername", connection))
                 {
+                    command.CommandType = System.Data.CommandType.StoredProcedure;
+                    command.Parameters.AddWithValue("arg_UserName", id);
 
-                    int TimeLeft = result.GetInt32(4);
-                    Boolean InPlay = result.GetBoolean(5);
-
-                    if (!InPlay || TimeLeft <= 0)
+                    using var result = command.ExecuteReader();
+                    if (result.Read())
                     {
-                        ctrls ??= new List<ControlItem>();
+                        tmpUserID = result.GetInt32(0);
+                    }
+                }
+            }
+
+            if (tmpUserID > 0)
+            {
+                using (var command = new MySqlCommand("usp_GetPlayItems", connection))
+                {
+                    command.CommandType = System.Data.CommandType.StoredProcedure;
+                    command.Parameters.AddWithValue("arg_UserID", tmpUserID);
+
+                    using var result = command.ExecuteReader();
+                    while (result.Read())
+                    {
+
+                        int TimeLeft = result.GetInt32(4);
+                        Boolean InPlay = result.GetBoolean(5);
+
                         ControlItem ci = new()
                         {
                             Type = (result.GetString(2) == "WWW") ? ControlItemType.WWW : ControlItemType.APP,
                             Identifier = result.GetString(3)
                         };
-                        ctrls.Add(ci);
+
+                        if (!InPlay || TimeLeft <= 0)
+                        {
+                            block_ctrls ??= new List<ControlItem>();
+                            block_ctrls.Add(ci);
+                        }
+                        else
+                        {
+                            nonblock_ctrls ??= new List<ControlItem>();
+                            nonblock_ctrls.Add(ci);
+                        }
                     }
                 }
             }
 
-            UsageControl uc = null;
-            if (ctrls != null)
+            UsageControls ret = new()
             {
-                uc = new()
+                Controls = new List<UsageControl>()
+            };
+
+            UsageControl ucBlocked = null;
+            if (block_ctrls != null)
+            {
+                ucBlocked = new()
                 {
                     DateRanges = new List<DateRange>
                     {
                         new()
                         {
-                            DOW = MyDow.Monday | MyDow.Tuesday | MyDow.Wednesday | MyDow.Thursday | MyDow.Friday | MyDow.Saturday | MyDow.Sunday,
+                            DOW = MyDow.Sunday | MyDow.Monday | MyDow.Tuesday | MyDow.Wednesday | MyDow.Thursday | MyDow.Friday | MyDow.Saturday,
                             TimeRanges = new List<TimeRange>
                             {
                                 new()
@@ -81,17 +111,37 @@ namespace MyTime.Controllers.api
                             }
                         }
                     },
-                    ControlItems = ctrls
+                    ControlItems = block_ctrls
                 };
+                ret.Controls.Add(ucBlocked);
             }
 
-            UsageControls ret = new()
+            UsageControl ucUnBlocked = null;
+            if (nonblock_ctrls != null)
             {
-                Controls = new List<UsageControl>
+                ucUnBlocked = new()
                 {
-                    uc
-                }
-            };
+                    DateRanges = new List<DateRange>
+                    {
+                        new()
+                        {
+                            DOW = MyDow.Sunday | MyDow.Monday | MyDow.Tuesday | MyDow.Wednesday | MyDow.Thursday | MyDow.Friday | MyDow.Saturday,
+                            TimeRanges = new List<TimeRange>
+                            {
+                                new()
+                                {
+                                    StartHour = 0,
+                                    StartMin = 0,
+                                    EndHour = 0,
+                                    EndMin = 0
+                                }
+                            }
+                        }
+                    },
+                    ControlItems = nonblock_ctrls
+                };
+                ret.Controls.Add(ucUnBlocked);
+            }
 
             return ret;
         }
