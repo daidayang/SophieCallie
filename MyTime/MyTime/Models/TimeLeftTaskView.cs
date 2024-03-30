@@ -4,7 +4,7 @@
     {
         public List<TimeLeft> Tasks { get; set; }
         public string SelectedTaskId { get; set; }
-        public TimeLeft SelectedTask => Tasks?.FirstOrDefault(t => t.Name == SelectedTaskId);
+        public TimeLeft SelectedTask => Tasks?.FirstOrDefault(t => t.TypeID.ToString() == SelectedTaskId);
         public string ButtonText => SelectedTask?.State == true ? "Stop" : "Start";
     }
 }

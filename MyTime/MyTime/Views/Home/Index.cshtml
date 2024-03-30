@@ -8,7 +8,7 @@
 @using (Html.BeginForm("Index", "Home", FormMethod.Post, new { id = "taskForm" }))
 {
     @Html.DropDownListFor(m => m.SelectedTaskId,
-                new SelectList(Model.Tasks, "Name", "Name"),
+                new SelectList(Model.Tasks, "TypeID", "TypeName"),
                 "Select a Task",
                 new { @onchange = "document.getElementById('taskForm').submit();" })
 

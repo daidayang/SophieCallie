@@ -13,14 +13,6 @@ namespace MyTime.Controllers
     {
         private string connectionString = "server=mytimedb;database=MyTime;uid=mytime;pwd=mytime123;";
 
-        private List<TimeLeft> tasks = new List<TimeLeft>
-    {
-        new TimeLeft { Name = "Task 1", TimeLeftInMin = 90, State = true },
-        new TimeLeft { Name = "Task 2", TimeLeftInMin = 60, State = false },
-        // Add more tasks as needed
-    };
-
-
         private readonly ILogger<HomeController> _logger;
 
         public HomeController(ILogger<HomeController> logger)
@@ -31,10 +23,16 @@ namespace MyTime.Controllers
         [HttpGet]
         public ActionResult Index()
         {
+            int? userid = HttpContext.Session.GetInt32("UserID");
+            if (userid == null)
+                return RedirectToAction("login");
+
+            List<TimeLeft> tasks = GetFreeTime((int)userid);
+
             var model = new TimeLeftTaskView
             {
                 Tasks = tasks,
-                SelectedTaskId = tasks[0].Name
+                SelectedTaskId = tasks[0].TypeID.ToString()
             };
             return View(model);
         }
@@ -42,20 +40,28 @@ namespace MyTime.Controllers
         [HttpPost]
         public ActionResult Index(string selectedTaskId, string action)
         {
+            int? userid = HttpContext.Session.GetInt32("UserID");
+            if (userid == null)
+                return RedirectToAction("login");
+
+            List<TimeLeft> tasks = GetFreeTime((int)userid);
+
+            if (action == "toggleState")
+            {
+                var selectedTask = tasks.FirstOrDefault(t => t.TypeID.ToString() == selectedTaskId);
+                if (selectedTask != null)
+                {
+                    SetRunState((int)userid, selectedTask.TypeID, !selectedTask.State);
+                    // selectedTask.State = !selectedTask.State;
+                    tasks = GetFreeTime((int)userid);
+                }
+            }
+
             var model = new TimeLeftTaskView
             {
                 Tasks = tasks,
                 SelectedTaskId = selectedTaskId
             };
-
-            if (action == "toggleState")
-            {
-                var selectedTask = tasks.FirstOrDefault(t => t.Name == selectedTaskId);
-                if (selectedTask != null)
-                {
-                    selectedTask.State = !selectedTask.State;
-                }
-            }
 
             return View(model);
         }
@@ -94,19 +100,6 @@ namespace MyTime.Controllers
             }
         }
 
-        public ActionResult SelectObject()
-        {
-            List<TimeLeft> objects = new List<TimeLeft>
-            {
-                new TimeLeft { Name = "Games", TimeLeftInMin = 30 },
-                new TimeLeft { Name = "Videos", TimeLeftInMin = 45 }
-            };
-
-            ViewBag.ObjectList = objects;
-            return View();
-        }
-
-
         private bool IsValidUser(UserLogin user)
         {
             using var connection = new MySqlConnection(connectionString);
@@ -125,6 +118,54 @@ namespace MyTime.Controllers
                 HttpContext.Session.SetInt32("UserID", (int)result);
                 int? value = HttpContext.Session.GetInt32("UserID");
                 return true;
+            }
+        }
+
+        private List<TimeLeft> GetFreeTime(int userid)
+        {
+            List<TimeLeft> ret = null;
+
+            using var connection = new MySqlConnection(connectionString);
+            connection.Open();
+            var query = "usp_GetTimeLeft";
+
+            using (var command = new MySqlCommand(query, connection))
+            {
+                command.CommandType = System.Data.CommandType.StoredProcedure;
+                command.Parameters.AddWithValue("arg_ID", userid);
+
+                using var result = command.ExecuteReader();
+                while (result.Read())
+                {
+                    ret ??= new List<TimeLeft>();
+
+                    TimeLeft rl = new()
+                    {
+                        TypeID = result.GetInt32(0),
+                        TypeName = result.GetString(1),
+                        TimeLeftInMin = result.GetInt32(2) / 60,
+                        State = result.GetBoolean(3)
+                    };
+                    ret.Add(rl);
+                }
+            }
+
+            return ret;
+        }
+
+        private void SetRunState(int userid, int playTypeID, bool setToRun)
+        {
+            using var connection = new MySqlConnection(connectionString);
+            connection.Open();
+            var query = "usp_ToggleState";
+
+            using (var command = new MySqlCommand(query, connection))
+            {
+                command.CommandType = System.Data.CommandType.StoredProcedure;
+                command.Parameters.AddWithValue("arg_ID", userid);
+                command.Parameters.AddWithValue("arg_PlayTypeID", playTypeID);
+                command.Parameters.AddWithValue("arg_Play", setToRun);
+                command.ExecuteNonQuery();
             }
         }
     }
