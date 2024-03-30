@@ -13,17 +13,50 @@ html {
     min-height: 100%;
 }
 
+.border-top{
+    background-color: white;
+}
+
+#header-container{
+    justify-content: space-around;
+    padding:0px;
+}
+
 div {
     text-align: center;
     padding:10px;
 }
 
 .navbar-brand{
-    text-align:center;
+    font-family:'Century Gothic';
+    font-size: xx-large;
+    margin-right: 0px;
+}
+
+footer{
+    font-family:'Century Gothic';
+}
+
+.acc-table{
+    font-family:'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+    color: white;
+}
+
+.pb-3 h2{
+    margin-bottom: 25px !important;
+    font-family:Calibri;
+    font-size: 250%;
+    color:darkcyan;
+}
+
+#login-button{
+    color:white;
+    background-color:darkcyan;
+    outline-color: white;
 }
 
 .login-content{
-    background-color: black;
+    background-color: cadetblue;
 }
 /* style.css */
 body {

@@ -4,21 +4,21 @@
     ViewData["Title"] = "Login";
 }
 
-<h2>Login</h2>
+<h2>Welcome</h2>
 
 @using (Html.BeginForm("Login", "Home", FormMethod.Post))
 {   
     <div class="login-content">
-        <div>
+        <div class="acc-table">
             @Html.LabelFor(m => m.Username)
             @Html.TextBoxFor(m => m.Username)
         </div>
-        <div>
+        <div class="acc-table">
             @Html.LabelFor(m => m.Password)
             @Html.PasswordFor(m => m.Password)
         </div>
         <div>
-            <input type="submit" value="Login" />
+            <input id="login-button" type="submit" value="Login" />
         </div>
     </div>
     
