@@ -13,6 +13,14 @@ html {
     min-height: 100%;
 }
 
+.container{
+    margin-bottom: 0px;
+}
+
+#middle-container{
+    margin-top:50px;
+}
+
 .border-top{
     background-color: white;
 }
@@ -33,8 +41,13 @@ div {
     margin-right: 0px;
 }
 
-footer{
-    font-family:'Century Gothic';
+footer {
+    font-family: 'Century Gothic';
+    box-shadow: 0.75rem 0.25rem 0.75rem 0.75rem rgba(0, 0, 0, .05);
+}
+
+.border-top {
+    margin-top: 10px;
 }
 
 .acc-table{
