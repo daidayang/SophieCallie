@@ -21,6 +21,32 @@ html {
     margin-top:50px;
 }
 
+#taskForm{
+    display: flex; 
+    flex-direction: column;
+    justify-content: center;
+    align-items:center;
+    
+}
+
+#startButton {
+    color: white;
+    background-color: darkcyan;
+    outline-color: white;
+    width:10%;
+}
+
+#SelectedTaskId{
+    width:10%;
+    text-align:center;
+}
+
+.taskFormChild {
+    margin: 5px;
+    width: 20%;
+    padding: 10px;
+}
+
 .border-top{
     background-color: white;
 }

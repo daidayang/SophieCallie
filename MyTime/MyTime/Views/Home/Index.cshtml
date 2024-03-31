@@ -12,9 +12,9 @@
                 "Select a Task",
                 new { @onchange = "document.getElementById('taskForm').submit();" })
 
-    <label>Time Left: @Model.SelectedTask?.TimeLeftInMin minutes</label>
+    <label class="taskFormChild">Time Left: @Model.SelectedTask?.TimeLeftInMin minutes</label>
 
-    <button type="submit" name="action" value="toggleState">
+    <button id="startButton" class="taskFormChild" type="submit" name="action" value="toggleState">
         @Model.ButtonText
     </button>
 }
