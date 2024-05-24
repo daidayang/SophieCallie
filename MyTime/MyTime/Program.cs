@@ -18,11 +18,11 @@ builder.Services.AddControllers()
         options.SerializerSettings.ContractResolver = new DefaultContractResolver();
     });
 
-builder.WebHost.ConfigureKestrel((context, serverOptions) =>
-{
-    // 5270 is the port number
-    serverOptions.Listen(System.Net.IPAddress.Loopback, 5100);
-});
+//builder.WebHost.ConfigureKestrel((context, serverOptions) =>
+//{
+//    // 5270 is the port number
+//    serverOptions.Listen(System.Net.IPAddress.Loopback, 5100);
+//});
 
 var app = builder.Build();
 
