@@ -6,6 +6,12 @@ using MyTime.Models.api;
 using System.Text.Json;
 using Newtonsoft.Json;
 using MyTime.Models;
+using System.Threading.Tasks;
+
+using log4net;
+using MySqlX.XDevAPI;
+using static System.Net.Mime.MediaTypeNames;
+using Microsoft.Extensions.Options;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -15,6 +21,14 @@ namespace MyTime.Controllers.api
     [ApiController]
     public class FeedController : ControllerBase
     {
+        private readonly MySettings _mySettings;
+
+        public FeedController(IOptions<MySettings> mySettings)
+        {
+            _mySettings = mySettings.Value;
+        }
+
+        private static readonly ILog log = LogManager.GetLogger(typeof(FeedController));
         private string connectionString = "server=mytimedb;database=MyTime;uid=mytime;pwd=mytime123;";
 
         //// GET: api/<FeedController>
@@ -30,6 +44,8 @@ namespace MyTime.Controllers.api
         {
             List<ControlItem> block_ctrls = null;
             List<ControlItem> nonblock_ctrls = null;
+
+            log.Debug("Get method called.");
 
             using var connection = new MySqlConnection(connectionString);
             connection.Open();
@@ -143,7 +159,58 @@ namespace MyTime.Controllers.api
                 ret.Controls.Add(ucUnBlocked);
             }
 
+            ret.Tasks =
+            [
+                new MyTimeTaskItem { TaskName = "GetTaskList", Options = "moviesjoy" },
+                new MyTimeTaskItem { TaskName = "TakeScreenShot", Options = "youtube" },
+            ];
+
             return ret;
+        }
+
+        [HttpPost("{id}/PostTaskList")]
+        public void PostTaskList(string id, List<WindowsTaskItem> tasks)
+        {
+            log.Debug("PostTaskList method called.");
+
+            if (tasks == null)
+                return;
+
+            foreach (WindowsTaskItem wti in tasks)
+            {
+                log.DebugFormat("User: {0), TaskName: {1}, ExePath: {2}, PID: {3}, Status: {4}", id, wti.TaskName, wti.ExePath, wti.PID, wti.Status);
+            }
+
+            return;
+        }
+
+        [HttpPost("{id}/PostImage")]
+        public async Task<IActionResult> PostImage(string id, IFormFile image)
+        {
+            if (image == null || image.Length == 0)
+            {
+                return BadRequest("No image uploaded.");
+            }
+
+            // Define the path to save the image
+            var imagePath = Path.Combine(_mySettings.ImagePath, id);
+
+            // Create directory if not exists
+            if (!Directory.Exists(imagePath))
+            {
+                Directory.CreateDirectory(imagePath);
+            }
+
+            // Define the full path for the image
+            var filePath = Path.Combine(imagePath, image.FileName);
+
+            // Save the image
+            using (var stream = new FileStream(filePath, FileMode.Create))
+            {
+                await image.CopyToAsync(stream);
+            }
+
+            return Ok(new { Message = "Image uploaded successfully.", FilePath = filePath });
         }
 
         //// POST api/<FeedController>

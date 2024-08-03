@@ -1,6 +1,19 @@
+using System.IO;
+
+using Microsoft.AspNetCore.Builder;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+
+using log4net;
+using log4net.Config;
+
 using Newtonsoft.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
+
+// Configure log4net
+var logRepository = LogManager.GetRepository(System.Reflection.Assembly.GetEntryAssembly());
+XmlConfigurator.Configure(logRepository, new FileInfo("log4net.config"));
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
@@ -17,6 +30,14 @@ builder.Services.AddControllers()
     {
         options.SerializerSettings.ContractResolver = new DefaultContractResolver();
     });
+
+// Configure and bind settings from appsettings.json
+builder.Services.Configure<MySettings>(builder.Configuration.GetSection("MySettings"));
+
+// Add log4net logging
+builder.Logging.ClearProviders();
+builder.Logging.SetMinimumLevel(LogLevel.Debug);
+builder.Logging.AddLog4Net("log4net.config");
 
 //builder.WebHost.ConfigureKestrel((context, serverOptions) =>
 //{
@@ -44,3 +65,9 @@ app.MapControllerRoute(
     pattern: "{controller=Home}/{action=Index}/{id?}");
 
 app.Run();
+
+
+public class MySettings
+{
+    public string ImagePath { get; set; }
+}

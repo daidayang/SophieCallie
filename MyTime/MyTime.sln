@@ -3,7 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.7.34003.232
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MyTime", "MyTime\MyTime.csproj", "{BB453AAC-FA23-46D1-847B-37A94332C627}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MyTime", "MyTime\MyTime.csproj", "{BB453AAC-FA23-46D1-847B-37A94332C627}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CtrlDns", "CtrlDns\CtrlDns.csproj", "{0E4EF0FC-09B6-4C5A-90FE-CFB3CFCA7582}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +17,10 @@ Global
 		{BB453AAC-FA23-46D1-847B-37A94332C627}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BB453AAC-FA23-46D1-847B-37A94332C627}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BB453AAC-FA23-46D1-847B-37A94332C627}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0E4EF0FC-09B6-4C5A-90FE-CFB3CFCA7582}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0E4EF0FC-09B6-4C5A-90FE-CFB3CFCA7582}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0E4EF0FC-09B6-4C5A-90FE-CFB3CFCA7582}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0E4EF0FC-09B6-4C5A-90FE-CFB3CFCA7582}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
