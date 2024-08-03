@@ -5,14 +5,20 @@ using System.Diagnostics;
 using System.ServiceProcess;
 using System.Text;
 using System.Timers;
-using Newtonsoft.Json;
+
+using System.Net.Http;
+using System.Threading.Tasks;
+using System.IO;
 
 using System.Drawing;
 using System.Drawing.Imaging;
-using System.Runtime.InteropServices;
 using System.Windows.Forms;
 
+using Newtonsoft.Json;
+
 using CtrlDns.models;
+using System.Security.Policy;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.TrackBar;
 
 namespace CtrlDns
 {
@@ -46,83 +52,88 @@ namespace CtrlDns
             timer.Elapsed += new ElapsedEventHandler(this.ServiceTimer_Tick);
         }
 
-        public void DebugStart()
+        public async void DebugStart()
         {
+            CtrlUrl = ConfigurationManager.AppSettings["CtrlUrl"];
+
+            await PostRunningProcesses(CtrlUrl + "/PostTaskList");
+            //await CaptureScreenshotAsync(string.Empty, CtrlUrl + "/PostImage");
+
             OnStart(null);
         }
 
         protected override void OnStart(string[] args)
         {
-            UsageControls uc = new UsageControls
-            {
-                Controls = new List<UsageControl>                {
-                    new UsageControl {
-                        DateRanges = new List<DateRange>
-                        {
-                            new DateRange {
-                                DOW = MyDow.Monday | MyDow.Tuesday | MyDow.Wednesday | MyDow.Thursday | MyDow.Friday,
-                                TimeRanges = new List<TimeRange> {
-                                    new TimeRange {
-                                        StartHour = 1,
-                                        StartMin = 0,
-                                        EndHour = 17,
-                                        EndMin = 30
-                                    },
-                                    new TimeRange {
-                                        StartHour = 18,
-                                        StartMin = 30,
-                                        EndHour = 23,
-                                        EndMin = 30
-                                    }
-                                }
-                            },
-                            new DateRange {
-                                DOW = MyDow.Saturday | MyDow.Sunday,
-                                TimeRanges = new List<TimeRange> {
-                                    new TimeRange {
-                                        StartHour = 1,
-                                        StartMin = 0,
-                                        EndHour = 15,
-                                        EndMin = 30
-                                    },
-                                    new TimeRange {
-                                        StartHour = 23,
-                                        StartMin = 30,
-                                        EndHour = 23,
-                                        EndMin = 59
-                                    }
-                                }
-                            }
-                        },
-                        ControlItems = new List<ControlItem>
-                        {
-                            new ControlItem {
-                                Identifier = "www.youtube.com",
-                                Name = "YouTube",
-                                Type = ControlItemType.WWW
-                            },
-                            new ControlItem {
-                                Identifier = "www.roblox.com",
-                                Name = "roblox www",
-                                Type = ControlItemType.WWW
-                            },
-                            new ControlItem {
-                                Identifier = "web.roblox.com",
-                                Name = "roblox web",
-                                Type = ControlItemType.WWW
-                            },
-                            new ControlItem {
-                                Identifier = "robloxplayerbeta.exe",
-                                Name = "roblox exec",
-                                Type = ControlItemType.APP
-                            }
-                        }
-                    }
-                }
-            };
+            //UsageControls uc = new UsageControls
+            //{
+            //    Controls = new List<UsageControl>                {
+            //        new UsageControl {
+            //            DateRanges = new List<DateRange>
+            //            {
+            //                new DateRange {
+            //                    DOW = MyDow.Monday | MyDow.Tuesday | MyDow.Wednesday | MyDow.Thursday | MyDow.Friday,
+            //                    TimeRanges = new List<TimeRange> {
+            //                        new TimeRange {
+            //                            StartHour = 1,
+            //                            StartMin = 0,
+            //                            EndHour = 17,
+            //                            EndMin = 30
+            //                        },
+            //                        new TimeRange {
+            //                            StartHour = 18,
+            //                            StartMin = 30,
+            //                            EndHour = 23,
+            //                            EndMin = 30
+            //                        }
+            //                    }
+            //                },
+            //                new DateRange {
+            //                    DOW = MyDow.Saturday | MyDow.Sunday,
+            //                    TimeRanges = new List<TimeRange> {
+            //                        new TimeRange {
+            //                            StartHour = 1,
+            //                            StartMin = 0,
+            //                            EndHour = 15,
+            //                            EndMin = 30
+            //                        },
+            //                        new TimeRange {
+            //                            StartHour = 23,
+            //                            StartMin = 30,
+            //                            EndHour = 23,
+            //                            EndMin = 59
+            //                        }
+            //                    }
+            //                }
+            //            },
+            //            ControlItems = new List<ControlItem>
+            //            {
+            //                new ControlItem {
+            //                    Identifier = "www.youtube.com",
+            //                    Name = "YouTube",
+            //                    Type = ControlItemType.WWW
+            //                },
+            //                new ControlItem {
+            //                    Identifier = "www.roblox.com",
+            //                    Name = "roblox www",
+            //                    Type = ControlItemType.WWW
+            //                },
+            //                new ControlItem {
+            //                    Identifier = "web.roblox.com",
+            //                    Name = "roblox web",
+            //                    Type = ControlItemType.WWW
+            //                },
+            //                new ControlItem {
+            //                    Identifier = "robloxplayerbeta.exe",
+            //                    Name = "roblox exec",
+            //                    Type = ControlItemType.APP
+            //                }
+            //            }
+            //        }
+            //    }
+            //};
 
-            string sTmp = JsonConvert.SerializeObject(uc);
-            UsageControls dr2 = JsonConvert.DeserializeObject<UsageControls>(sTmp);
+            //string sTmp = JsonConvert.SerializeObject(uc);
+            //UsageControls dr2 = JsonConvert.DeserializeObject<UsageControls>(sTmp);
 
             CtrlUrl = ConfigurationManager.AppSettings["CtrlUrl"];
             timer.AutoReset = true;
@@ -136,7 +147,7 @@ namespace CtrlDns
             timer.Enabled = false;
         }
 
-        private void ServiceTimer_Tick(object sender, System.Timers.ElapsedEventArgs e)
+        private async void ServiceTimer_Tick(object sender, System.Timers.ElapsedEventArgs e)
         {
             DateTime TimeNow = DateTime.Now;
             if (DebugTimeTick && log.IsDebugEnabled)
@@ -148,7 +159,8 @@ namespace CtrlDns
             {
                 int rc = Utils.HttpGet(CtrlUrl, out string HttpResponse);
                 if (rc >= 0)
-                    ProcessServerResponse(HttpResponse);
+                    await ProcessServerResponse(HttpResponse);
+
                 if (log.IsDebugEnabled)
                     log.DebugFormat("URL={0}, rc={1}", CtrlUrl, rc);
             }
@@ -160,7 +172,7 @@ namespace CtrlDns
             this.timer.Start();
         }
 
-        private void ProcessServerResponse(string blockList)
+        private async Task ProcessServerResponse(string blockList)
         {
             UsageControls ucs = JsonConvert.DeserializeObject<UsageControls>(blockList);
 
@@ -288,18 +300,14 @@ namespace CtrlDns
                 #region Collect Windows Task lists
 
                 if (uc.TaskName == "GetTaskList")
-                {
-                    List<WindowsTaskItem> tasks = GetRunningProcesses();
-                }
+                    await PostRunningProcesses(CtrlUrl + "/PostTaskList");
 
                 #endregion
 
                 #region Take a screen shot
 
                 if (uc.TaskName == "TakeScreenShot")
-                {
-                    CaptureScreenshot("C:\\Temp\\screenshot.png");
-                }
+                    await CaptureScreenshotAsync(string.Empty, CtrlUrl + "/PostImage");
 
                 #endregion
             }
@@ -307,7 +315,7 @@ namespace CtrlDns
             #endregion
         }
 
-        private static void KillProcesses(List<string> lstBlockedProcessNames, int delay)
+        private void KillProcesses(List<string> lstBlockedProcessNames, int delay)
         {
             if (lstBlockedProcessNames == null)
                 return;
@@ -365,7 +373,7 @@ namespace CtrlDns
             }
         }
 
-        private static List<WindowsTaskItem> GetRunningProcesses()
+        private async Task PostRunningProcesses(string url)
         {
             List<WindowsTaskItem> ret = new List<WindowsTaskItem>();
 
@@ -380,15 +388,20 @@ namespace CtrlDns
                     WindowsTaskItem wp = new WindowsTaskItem();
                     wp.TaskName = p.ProcessName;
                     wp.PID = p.Id;
-                    wp.ExePath = p.MainModule.FileName;
+                    //wp.ExePath = p.MainModule.FileName;
                     wp.Status = p.Responding ? "Running" : "Not Responding";
                     ret.Add(wp);
                 }
             }
-            return ret;
+
+            if (ret.Count > 0)
+            {
+                string sTmp = JsonConvert.SerializeObject(ret);
+                await PostJsonAsync(sTmp, url);
+            }
         }
 
-        private static void CaptureScreenshot(string filePath)
+        private async Task CaptureScreenshotAsync(string filePath, string url)
         {
             try
             {
@@ -405,17 +418,72 @@ namespace CtrlDns
                         graphics.CopyFromScreen(bounds.X, bounds.Y, 0, 0, bounds.Size, CopyPixelOperation.SourceCopy);
                     }
 
+                    // Post the bitmap to the remote URL
+                    await PostImageAsync(bitmap, url);
+
                     // Save the bitmap to a file
-                    bitmap.Save(filePath, ImageFormat.Png);
+                    if (!string.IsNullOrWhiteSpace(filePath))
+                        bitmap.Save(filePath, ImageFormat.Png);
                 }
             }
             catch (Exception ex)
             {
-                // Log or handle exceptions
-                Console.WriteLine($"An error occurred while capturing the screenshot: {ex.Message}");
+                log.ErrorFormat("An error occurred while capturing the screenshot: {0}", ex.Message);
             }
         }
 
+        private async Task PostImageAsync(Bitmap bitmap, string url)
+        {
+            using (HttpClient client = new HttpClient())
+            {
+                using (var content = new MultipartFormDataContent())
+                {
+                    // Convert the bitmap to a memory stream
+                    using (var memoryStream = new MemoryStream())
+                    {
+                        bitmap.Save(memoryStream, ImageFormat.Png);
+                        memoryStream.Seek(0, SeekOrigin.Begin); // Reset the stream position
+
+                        // Create the stream content for the multipart form
+                        var streamContent = new StreamContent(memoryStream);
+                        streamContent.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue("image/png");
+                        content.Add(streamContent, "file", "screenshot.png");
+
+                        // Send the POST request
+                        HttpResponseMessage response = await client.PostAsync(url, content);
+                        if (response.IsSuccessStatusCode)
+                        {
+                            log.DebugFormat("Image uploaded successfully.");
+                        }
+                        else
+                        {
+                            log.ErrorFormat("Image upload failed: {0}", response.StatusCode);
+                        }
+                    }
+                }
+            }
+        }
+
+        private async Task PostJsonAsync(string jsonData, string url)
+        {
+            try
+            {
+                using (HttpClient client = new HttpClient())
+                {
+                    var content = new StringContent(jsonData, Encoding.UTF8, "application/json");
+                    HttpResponseMessage response = await client.PostAsync(url, content);
+
+                    response.EnsureSuccessStatusCode();
+
+                    string responseBody = await response.Content.ReadAsStringAsync();
+                    log.DebugFormat("Response: {0}", responseBody);
+                }
+            }
+            catch (HttpRequestException e)
+            {
+                log.ErrorFormat("Request error: {0}", e.Message);
+            }
+        }
     }
 }
 
