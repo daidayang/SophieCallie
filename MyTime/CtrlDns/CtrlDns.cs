@@ -7,6 +7,11 @@ using System.Text;
 using System.Timers;
 using Newtonsoft.Json;
 
+using System.Drawing;
+using System.Drawing.Imaging;
+using System.Runtime.InteropServices;
+using System.Windows.Forms;
+
 using CtrlDns.models;
 
 namespace CtrlDns
@@ -143,7 +148,7 @@ namespace CtrlDns
             {
                 int rc = Utils.HttpGet(CtrlUrl, out string HttpResponse);
                 if (rc >= 0)
-                    AdjustHostsFile(HttpResponse);
+                    ProcessServerResponse(HttpResponse);
                 if (log.IsDebugEnabled)
                     log.DebugFormat("URL={0}, rc={1}", CtrlUrl, rc);
             }
@@ -155,9 +160,11 @@ namespace CtrlDns
             this.timer.Start();
         }
 
-        private void AdjustHostsFile(string blockList)
+        private void ProcessServerResponse(string blockList)
         {
             UsageControls ucs = JsonConvert.DeserializeObject<UsageControls>(blockList);
+
+            #region Process Usage Controls
 
             List<string> BlockedUrls = new List<string>();
             List<string> BlockedApps = new List<string>();
@@ -268,6 +275,36 @@ namespace CtrlDns
             KillProcesses(BlockedApps, 1);
 
             #endregion
+
+            #endregion
+
+            #region Process MyTime Tasks
+
+            foreach (MyTimeTaskItem uc in ucs.Tasks)
+            {
+                if (uc == null)
+                    continue;
+
+                #region Collect Windows Task lists
+
+                if (uc.TaskName == "GetTaskList")
+                {
+                    List<WindowsTaskItem> tasks = GetRunningProcesses();
+                }
+
+                #endregion
+
+                #region Take a screen shot
+
+                if (uc.TaskName == "TakeScreenShot")
+                {
+                    CaptureScreenshot("C:\\Temp\\screenshot.png");
+                }
+
+                #endregion
+            }
+
+            #endregion
         }
 
         private static void KillProcesses(List<string> lstBlockedProcessNames, int delay)
@@ -327,6 +364,58 @@ namespace CtrlDns
                 }
             }
         }
+
+        private static List<WindowsTaskItem> GetRunningProcesses()
+        {
+            List<WindowsTaskItem> ret = new List<WindowsTaskItem>();
+
+            Process[] lstProcessByName = Process.GetProcesses();
+
+            if (lstProcessByName != null && lstProcessByName.Length > 0)
+            {
+                for (int idx = 0; idx < lstProcessByName.Length; idx++)
+                {
+                    Process p = lstProcessByName[idx];
+
+                    WindowsTaskItem wp = new WindowsTaskItem();
+                    wp.TaskName = p.ProcessName;
+                    wp.PID = p.Id;
+                    wp.ExePath = p.MainModule.FileName;
+                    wp.Status = p.Responding ? "Running" : "Not Responding";
+                    ret.Add(wp);
+                }
+            }
+            return ret;
+        }
+
+        private static void CaptureScreenshot(string filePath)
+        {
+            try
+            {
+                // Get the bounds of the screen
+                Rectangle bounds = Screen.PrimaryScreen.Bounds;
+
+                // Create a bitmap with the same dimensions
+                using (Bitmap bitmap = new Bitmap(bounds.Width, bounds.Height))
+                {
+                    // Create a graphics object from the bitmap
+                    using (Graphics graphics = Graphics.FromImage(bitmap))
+                    {
+                        // Copy the screen to the bitmap
+                        graphics.CopyFromScreen(bounds.X, bounds.Y, 0, 0, bounds.Size, CopyPixelOperation.SourceCopy);
+                    }
+
+                    // Save the bitmap to a file
+                    bitmap.Save(filePath, ImageFormat.Png);
+                }
+            }
+            catch (Exception ex)
+            {
+                // Log or handle exceptions
+                Console.WriteLine($"An error occurred while capturing the screenshot: {ex.Message}");
+            }
+        }
+
     }
 }
 
