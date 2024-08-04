@@ -8,6 +8,7 @@ using log4net;
 using log4net.Config;
 
 using Newtonsoft.Json.Serialization;
+using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -33,6 +34,12 @@ builder.Services.AddControllers()
 
 // Configure and bind settings from appsettings.json
 builder.Services.Configure<MySettings>(builder.Configuration.GetSection("MySettings"));
+
+// Register the Swagger generator, defining one or more Swagger documents
+builder.Services.AddSwaggerGen(c =>
+{
+    c.SwaggerDoc("v1", new OpenApiInfo { Title = "MyTime API", Version = "v1" });
+});
 
 // Add log4net logging
 builder.Logging.ClearProviders();
@@ -63,6 +70,17 @@ app.UseSession(); // Add this to use session
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
+
+// Enable middleware to serve generated Swagger as a JSON endpoint.
+app.UseSwagger();
+
+// Enable middleware to serve swagger-ui (HTML, JS, CSS, etc.),
+// specifying the Swagger JSON endpoint.
+app.UseSwaggerUI(c =>
+{
+    c.SwaggerEndpoint("/swagger/v1/swagger.json", "MyTime API V1");
+    c.RoutePrefix = string.Empty; // Set Swagger UI at the app's root
+});
 
 app.Run();
 

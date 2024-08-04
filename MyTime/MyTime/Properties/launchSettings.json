@@ -3,6 +3,7 @@
     "MyTime": {
       "commandName": "Project",
       "launchBrowser": true,
+      "launchUrl": "http://localhost:5100/api/Feed/3",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       },

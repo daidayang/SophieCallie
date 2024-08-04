@@ -178,7 +178,7 @@ namespace MyTime.Controllers.api
 
             foreach (WindowsTaskItem wti in tasks)
             {
-                log.DebugFormat("User: {0), TaskName: {1}, ExePath: {2}, PID: {3}, Status: {4}", id, wti.TaskName, wti.ExePath, wti.PID, wti.Status);
+                log.DebugFormat("User: {0}, TaskName: {1}, ExePath: {2}, PID: {3}, Status: {4}", id, wti.TaskName, wti.ExePath, wti.PID, wti.Status);
             }
 
             return;
