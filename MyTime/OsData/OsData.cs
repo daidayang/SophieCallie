@@ -75,7 +75,7 @@ namespace OsData
 
             try
             {
-                int rc = Utils.HttpGet(CtrlUrl, out string HttpResponse);
+                int rc = Utils.HttpGet(CtrlUrl + "/GetMyTask", out string HttpResponse);
                 if (rc >= 0)
                     await ProcessServerResponse(HttpResponse);
 

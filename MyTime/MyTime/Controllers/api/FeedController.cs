@@ -39,8 +39,8 @@ namespace MyTime.Controllers.api
         //}
 
         // GET api/<FeedController>/5
-        [HttpGet("{id}")]
-        public UsageControls Get(string id)
+        [HttpGet("{id}/GetUsageCtrl")]
+        public UsageControls GetUsageCtrl(string id)
         {
             List<ControlItem> block_ctrls = null;
             List<ControlItem> nonblock_ctrls = null;
@@ -159,14 +159,24 @@ namespace MyTime.Controllers.api
                 ret.Controls.Add(ucUnBlocked);
             }
 
+            return ret;
+        }
+
+
+        [HttpGet("{id}/GetMyTask")]
+        public MyTaasks GetMyTask(string id)
+        {
+            log.Debug("Get method called.");
+
+            MyTaasks ret = new();
             ret.Tasks =
             [
                 new MyTimeTaskItem { TaskName = "GetTaskList", Options = "moviesjoy" },
                 new MyTimeTaskItem { TaskName = "TakeScreenShot", Options = "youtube" },
             ];
-
             return ret;
         }
+
 
         [HttpPost("{id}/PostTaskList")]
         public void PostTaskList(string id, List<WindowsTaskItem> tasks)

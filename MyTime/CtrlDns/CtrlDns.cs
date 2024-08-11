@@ -56,12 +56,12 @@ namespace CtrlDns
             timer.Elapsed += new ElapsedEventHandler(this.ServiceTimer_Tick);
         }
 
-        public async void DebugStart()
+        public void DebugStart()
         {
             CtrlUrl = ConfigurationManager.AppSettings["CtrlUrl"];
 
             // await PostRunningProcesses(CtrlUrl + "/PostTaskList");
-            //await CaptureScreenshotAsync(string.Empty, CtrlUrl + "/PostImage");
+            // await CaptureScreenshotAsync(string.Empty, CtrlUrl + "/PostImage");
 
             OnStart(null);
         }
@@ -151,7 +151,7 @@ namespace CtrlDns
             timer.Enabled = false;
         }
 
-        private async void ServiceTimer_Tick(object sender, System.Timers.ElapsedEventArgs e)
+        private void ServiceTimer_Tick(object sender, System.Timers.ElapsedEventArgs e)
         {
             DateTime TimeNow = DateTime.Now;
             if (DebugTimeTick && log.IsDebugEnabled)
@@ -161,9 +161,13 @@ namespace CtrlDns
 
             try
             {
-                int rc = Utils.HttpGet(CtrlUrl, out string HttpResponse);
+                bool ProcessOk = false;
+                int rc = Utils.HttpGet(CtrlUrl + "/getusagectrl", out string HttpResponse);
                 if (rc >= 0)
-                    await ProcessServerResponse(HttpResponse);
+                    ProcessOk = ProcessServerResponse(HttpResponse);
+
+                if (!ProcessOk)
+                    RemoveDnsBlocking();
 
                 if (log.IsDebugEnabled)
                     log.DebugFormat("URL={0}, rc={1}", CtrlUrl, rc);
@@ -176,123 +180,137 @@ namespace CtrlDns
             this.timer.Start();
         }
 
-        private async Task ProcessServerResponse(string blockList)
+        private bool ProcessServerResponse(string blockList)
         {
-            UsageControls ucs = JsonConvert.DeserializeObject<UsageControls>(blockList);
+            bool ProcessOk;
 
-            #region Process Usage Controls
-
-            List<string> BlockedUrls = new List<string>();
-            List<string> BlockedApps = new List<string>();
-
-            foreach (UsageControl uc in ucs.Controls)
+            try
             {
-                bool blocked = false;
-                DateTime NOW = DateTime.Now;
-                MyDow TodayDOW = ToDayOfWeek(DateTime.Today.DayOfWeek);
+                UsageControls ucs = JsonConvert.DeserializeObject<UsageControls>(blockList);
 
-                foreach (DateRange dr in uc.DateRanges)
+                #region Process Usage Controls
+
+                List<string> BlockedUrls = new List<string>();
+                List<string> BlockedApps = new List<string>();
+
+                foreach (UsageControl uc in ucs.Controls)
                 {
-                    if ((TodayDOW & dr.DOW) != TodayDOW)
+                    bool blocked = false;
+                    DateTime NOW = DateTime.Now;
+                    MyDow TodayDOW = ToDayOfWeek(DateTime.Today.DayOfWeek);
+
+                    foreach (DateRange dr in uc.DateRanges)
                     {
-                        log.DebugFormat("Today is {0}. Ignore entry {1}", TodayDOW, dr.DOW);
-                        continue;
-                    }
-
-                    foreach (TimeRange tr in dr.TimeRanges)
-                    {
-                        DateTime BeginTime = DateTime.Today.AddHours(tr.StartHour).AddMinutes(tr.StartMin);
-                        DateTime EndTime = DateTime.Today.AddHours(tr.EndHour).AddMinutes(tr.EndMin);
-                        if (BeginTime <= NOW && NOW <= EndTime)
+                        if ((TodayDOW & dr.DOW) != TodayDOW)
                         {
-                            log.DebugFormat("Now is {0}. Enforce entry [{1}, {2}:{3} - {4}:{5}]", NOW, dr.DOW, tr.StartHour, tr.StartMin, tr.EndHour, tr.EndMin);
-                            blocked = true;
-                            break;
-                        }
-                        else
-                        {
-                            log.DebugFormat("Now is {0}. Ignore entry [{1}, {2}:{3} - {4}:{5}]", NOW, dr.DOW, tr.StartHour, tr.StartMin, tr.EndHour, tr.EndMin);
-                        }
-                    }
-                }
-
-                if (blocked)
-                {
-                    foreach (ControlItem ci in uc.ControlItems)
-                    {
-
-                        if (ci.Type == ControlItemType.WWW)
-                        {
-                            BlockedUrls.Add(ci.Identifier);
-                        }
-                        else
-                        {
-                            BlockedApps.Add(ci.Identifier);
-                        }
-                    }
-                }
-            }
-
-            #region Modify hosts file to block URL mappings
-
-            string[] OldHostsFileLines = System.IO.File.ReadAllLines(@"C:\Windows\System32\drivers\etc\hosts");
-            List<string> lstLines = new List<string>();
-            StringBuilder sb = new StringBuilder();
-            foreach (string l in OldHostsFileLines)
-            {
-                bool keep = true;
-                string[] ss = l.Split(' ');
-                if (ss.Length >= 3)
-                {
-                    int TxtCnt = 1;
-                    string Txt2 = null;
-                    for (int idy = 0; idy < ss.Length; idy++)
-                    {
-                        if (string.IsNullOrWhiteSpace(ss[idy]))
+                            log.DebugFormat("Today is {0}. Ignore entry {1}", TodayDOW, dr.DOW);
                             continue;
-
-                        if (TxtCnt == 2)
-                            Txt2 = ss[idy];
-
-                        if (ss[idy] == "#CtrlDns")
-                        {
-                            if (!BlockedUrls.Contains(Txt2))
-                                keep = false;
                         }
-                        TxtCnt++;
+
+                        foreach (TimeRange tr in dr.TimeRanges)
+                        {
+                            DateTime BeginTime = DateTime.Today.AddHours(tr.StartHour).AddMinutes(tr.StartMin);
+                            DateTime EndTime = DateTime.Today.AddHours(tr.EndHour).AddMinutes(tr.EndMin);
+                            if (BeginTime <= NOW && NOW <= EndTime)
+                            {
+                                log.DebugFormat("Now is {0}. Enforce entry [{1}, {2}:{3} - {4}:{5}]", NOW, dr.DOW, tr.StartHour, tr.StartMin, tr.EndHour, tr.EndMin);
+                                blocked = true;
+                                break;
+                            }
+                            else
+                            {
+                                log.DebugFormat("Now is {0}. Ignore entry [{1}, {2}:{3} - {4}:{5}]", NOW, dr.DOW, tr.StartHour, tr.StartMin, tr.EndHour, tr.EndMin);
+                            }
+                        }
                     }
 
-                    if (keep)
+                    if (blocked)
                     {
-                        sb.AppendLine(l);
-                        lstLines.Add(l);
+                        foreach (ControlItem ci in uc.ControlItems)
+                        {
+
+                            if (ci.Type == ControlItemType.WWW)
+                            {
+                                BlockedUrls.Add(ci.Identifier);
+                            }
+                            else
+                            {
+                                BlockedApps.Add(ci.Identifier);
+                            }
+                        }
                     }
                 }
-            }
 
-            string FullText = sb.ToString();
-            foreach (string l in BlockedUrls)
+                #region Modify hosts file to block URL mappings
+
+                string[] OldHostsFileLines = System.IO.File.ReadAllLines(@"C:\Windows\System32\drivers\etc\hosts");
+                List<string> lstLines = new List<string>();
+                StringBuilder sb = new StringBuilder();
+                foreach (string l in OldHostsFileLines)
+                {
+                    bool keep = true;
+                    string[] ss = l.Split(' ');
+                    if (ss.Length >= 3)
+                    {
+                        int TxtCnt = 1;
+                        string Txt2 = null;
+                        for (int idy = 0; idy < ss.Length; idy++)
+                        {
+                            if (string.IsNullOrWhiteSpace(ss[idy]))
+                                continue;
+
+                            if (TxtCnt == 2)
+                                Txt2 = ss[idy];
+
+                            if (ss[idy] == "#CtrlDns")
+                            {
+                                if (!BlockedUrls.Contains(Txt2))
+                                    keep = false;
+                            }
+                            TxtCnt++;
+                        }
+
+                        if (keep)
+                        {
+                            sb.AppendLine(l);
+                            lstLines.Add(l);
+                        }
+                    }
+                }
+
+                string FullText = sb.ToString();
+                foreach (string l in BlockedUrls)
+                {
+                    if (string.IsNullOrWhiteSpace(l))
+                        continue;
+
+                    log.DebugFormat("Need to block {0}", l);
+
+                    if (FullText.IndexOf(l, StringComparison.OrdinalIgnoreCase) < 0)
+                        lstLines.Add(string.Format("127.0.0.1  {0}  #CtrlDns", l));
+                }
+
+                System.IO.File.WriteAllLines(@"C:\Windows\System32\drivers\etc\hosts", lstLines);
+
+                #endregion
+
+                #region Kill apps that are blocked
+
+                KillProcesses(BlockedApps, 1);
+
+                #endregion
+
+                #endregion
+
+                ProcessOk = true;
+            }
+            catch (Exception ex)
             {
-                if (string.IsNullOrWhiteSpace(l))
-                    continue;
-
-                log.DebugFormat("Need to block {0}", l);
-
-                if (FullText.IndexOf(l, StringComparison.OrdinalIgnoreCase) < 0)
-                    lstLines.Add(string.Format("127.0.0.1  {0}  #CtrlDns", l));
+                ProcessOk = false;
+                log.ErrorFormat("ProcessServerResponse exception.  Error={0}, StackTrace={1}", ex.Message, ex.StackTrace);
             }
 
-            System.IO.File.WriteAllLines(@"C:\Windows\System32\drivers\etc\hosts", lstLines);
-
-            #endregion
-
-            #region Kill apps that are blocked
-
-            KillProcesses(BlockedApps, 1);
-
-            #endregion
-
-            #endregion
+            return ProcessOk;
 
             //#region Process MyTime Tasks
 
@@ -318,6 +336,45 @@ namespace CtrlDns
 
             //#endregion
         }
+
+        private void RemoveDnsBlocking()
+        {
+
+            #region Modify hosts file to block URL mappings
+
+            string[] OldHostsFileLines = System.IO.File.ReadAllLines(@"C:\Windows\System32\drivers\etc\hosts");
+            List<string> lstLines = new List<string>();
+            foreach (string l in OldHostsFileLines)
+            {
+                bool keep = true;
+                string[] ss = l.Split(' ');
+                if (ss.Length >= 3)
+                {
+                    int TxtCnt = 1;
+                    string Txt2 = null;
+                    for (int idy = 0; idy < ss.Length; idy++)
+                    {
+                        if (string.IsNullOrWhiteSpace(ss[idy]))
+                            continue;
+
+                        if (TxtCnt == 2)
+                            Txt2 = ss[idy];
+
+                        if (ss[idy] == "#CtrlDns")
+                            keep = false;
+                        TxtCnt++;
+                    }
+
+                    if (keep)
+                        lstLines.Add(l);
+                }
+            }
+
+            System.IO.File.WriteAllLines(@"C:\Windows\System32\drivers\etc\hosts", lstLines);
+
+            #endregion
+        }
+
 
         private void KillProcesses(List<string> lstBlockedProcessNames, int delay)
         {
