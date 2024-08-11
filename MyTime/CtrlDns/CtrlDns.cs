@@ -61,9 +61,9 @@ namespace CtrlDns
             CtrlUrl = ConfigurationManager.AppSettings["CtrlUrl"];
 
             // await PostRunningProcesses(CtrlUrl + "/PostTaskList");
-            await CaptureScreenshotAsync(string.Empty, CtrlUrl + "/PostImage");
+            //await CaptureScreenshotAsync(string.Empty, CtrlUrl + "/PostImage");
 
-            //OnStart(null);
+            OnStart(null);
         }
 
         protected override void OnStart(string[] args)
@@ -294,29 +294,29 @@ namespace CtrlDns
 
             #endregion
 
-            #region Process MyTime Tasks
+            //#region Process MyTime Tasks
 
-            foreach (MyTimeTaskItem uc in ucs.Tasks)
-            {
-                if (uc == null)
-                    continue;
+            //foreach (MyTimeTaskItem uc in ucs.Tasks)
+            //{
+            //    if (uc == null)
+            //        continue;
 
-                #region Collect Windows Task lists
+            //    #region Collect Windows Task lists
 
-                if (uc.TaskName == "GetTaskList")
-                    await PostRunningProcesses(CtrlUrl + "/PostTaskList");
+            //    if (uc.TaskName == "GetTaskList")
+            //        await PostRunningProcesses(CtrlUrl + "/PostTaskList");
 
-                #endregion
+            //    #endregion
 
-                #region Take a screen shot
+            //    #region Take a screen shot
 
-                if (uc.TaskName == "TakeScreenShot")
-                    await CaptureScreenshotAsync(string.Empty, CtrlUrl + "/PostImage");
+            //    if (uc.TaskName == "TakeScreenShot")
+            //        await CaptureScreenshotAsync(string.Empty, CtrlUrl + "/PostImage");
 
-                #endregion
-            }
+            //    #endregion
+            //}
 
-            #endregion
+            //#endregion
         }
 
         private void KillProcesses(List<string> lstBlockedProcessNames, int delay)
@@ -377,162 +377,162 @@ namespace CtrlDns
             }
         }
 
-        private async Task PostRunningProcesses(string url)
-        {
-            List<WindowsTaskItem> ret = new List<WindowsTaskItem>();
+        //private async Task PostRunningProcesses(string url)
+        //{
+        //    List<WindowsTaskItem> ret = new List<WindowsTaskItem>();
 
-            Process[] lstProcessByName = Process.GetProcesses();
+        //    Process[] lstProcessByName = Process.GetProcesses();
 
-            if (lstProcessByName != null && lstProcessByName.Length > 0)
-            {
-                for (int idx = 0; idx < lstProcessByName.Length; idx++)
-                {
-                    Process p = lstProcessByName[idx];
+        //    if (lstProcessByName != null && lstProcessByName.Length > 0)
+        //    {
+        //        for (int idx = 0; idx < lstProcessByName.Length; idx++)
+        //        {
+        //            Process p = lstProcessByName[idx];
 
-                    if (p.ProcessName == "svchost")
-                        continue;
+        //            if (p.ProcessName == "svchost")
+        //                continue;
 
-                    WindowsTaskItem wp = new WindowsTaskItem();
-                    wp.TaskName = p.ProcessName;
-                    wp.PID = p.Id;
-                    //wp.ExePath = p.MainModule.FileName;
-                    wp.Status = p.Responding ? "Running" : "Not Responding";
-                    ret.Add(wp);
-                }
-            }
+        //            WindowsTaskItem wp = new WindowsTaskItem();
+        //            wp.TaskName = p.ProcessName;
+        //            wp.PID = p.Id;
+        //            //wp.ExePath = p.MainModule.FileName;
+        //            wp.Status = p.Responding ? "Running" : "Not Responding";
+        //            ret.Add(wp);
+        //        }
+        //    }
 
-            if (ret.Count > 0)
-            {
-                string sTmp = JsonConvert.SerializeObject(ret);
-                await PostJsonAsync(sTmp, url);
-            }
-        }
+        //    if (ret.Count > 0)
+        //    {
+        //        string sTmp = JsonConvert.SerializeObject(ret);
+        //        await PostJsonAsync(sTmp, url);
+        //    }
+        //}
 
-        private async Task CaptureScreenshotAsync(string filePath, string url)
-        {
-            int screenID = 0;
-            try
-            {
-                foreach (var screen in Screen.AllScreens)
-                {
-                    // Get the bounds of the screen
-                    Rectangle bounds = screen.Bounds;
+        //private async Task CaptureScreenshotAsync(string filePath, string url)
+        //{
+        //    int screenID = 0;
+        //    try
+        //    {
+        //        foreach (var screen in Screen.AllScreens)
+        //        {
+        //            // Get the bounds of the screen
+        //            Rectangle bounds = screen.Bounds;
 
-                    // Use Graphics to get the actual DPI settings
-                    using (Graphics g = Graphics.FromHwnd(IntPtr.Zero))
-                    {
-                        IntPtr hdc = g.GetHdc();
-                        int dpiX = GetDeviceCaps(hdc, 88); // LOGPIXELSX
-                        int dpiY = GetDeviceCaps(hdc, 90); // LOGPIXELSY
+        //            // Use Graphics to get the actual DPI settings
+        //            using (Graphics g = Graphics.FromHwnd(IntPtr.Zero))
+        //            {
+        //                IntPtr hdc = g.GetHdc();
+        //                int dpiX = GetDeviceCaps(hdc, 88); // LOGPIXELSX
+        //                int dpiY = GetDeviceCaps(hdc, 90); // LOGPIXELSY
 
-                        //  https://pinvoke.net/default.aspx/gdi32/GetDeviceCaps.html
-                        //  https://stackoverflow.com/questions/5082610/get-and-set-screen-resolution
-                        /// <summary>
-                        /// Vertical height of entire desktop in pixels
-                        /// </summary>
-                        //  DESKTOPVERTRES = 117,
-                        /// <summary>
-                        /// Horizontal width of entire desktop in pixels
-                        /// </summary>
-                        //  DESKTOPHORZRES = 118,
-                        int LogicalScreenHeight = GetDeviceCaps(hdc, 8);
-                        int PhysicalScreenHeight = GetDeviceCaps(hdc, 10);
-                        int DesktopHeight = GetDeviceCaps(hdc, 117);
-                        int DesktopWidth = GetDeviceCaps(hdc, 118);
+        //                //  https://pinvoke.net/default.aspx/gdi32/GetDeviceCaps.html
+        //                //  https://stackoverflow.com/questions/5082610/get-and-set-screen-resolution
+        //                /// <summary>
+        //                /// Vertical height of entire desktop in pixels
+        //                /// </summary>
+        //                //  DESKTOPVERTRES = 117,
+        //                /// <summary>
+        //                /// Horizontal width of entire desktop in pixels
+        //                /// </summary>
+        //                //  DESKTOPHORZRES = 118,
+        //                int LogicalScreenHeight = GetDeviceCaps(hdc, 8);
+        //                int PhysicalScreenHeight = GetDeviceCaps(hdc, 10);
+        //                int DesktopHeight = GetDeviceCaps(hdc, 117);
+        //                int DesktopWidth = GetDeviceCaps(hdc, 118);
 
-                        g.ReleaseHdc(hdc);
+        //                g.ReleaseHdc(hdc);
 
-                        // Calculate the actual bounds without scaling
-                        int width = (int)(bounds.Width * 96 / dpiX);
-                        int height = (int)(bounds.Height * 96 / dpiY);
+        //                // Calculate the actual bounds without scaling
+        //                int width = (int)(bounds.Width * 96 / dpiX);
+        //                int height = (int)(bounds.Height * 96 / dpiY);
 
-                        // Create a bitmap with the actual dimensions
-                        using (Bitmap bitmap = new Bitmap(DesktopWidth, DesktopHeight))
-                        {
-                            // Create a graphics object from the bitmap
-                            using (Graphics graphics = Graphics.FromImage(bitmap))
-                            {
-                                // Copy the screen to the bitmap
-                                graphics.CopyFromScreen(bounds.X, bounds.Y, 0, 0, new Size(DesktopWidth, DesktopHeight), CopyPixelOperation.SourceCopy);
-                            }
+        //                // Create a bitmap with the actual dimensions
+        //                using (Bitmap bitmap = new Bitmap(DesktopWidth, DesktopHeight))
+        //                {
+        //                    // Create a graphics object from the bitmap
+        //                    using (Graphics graphics = Graphics.FromImage(bitmap))
+        //                    {
+        //                        // Copy the screen to the bitmap
+        //                        graphics.CopyFromScreen(bounds.X, bounds.Y, 0, 0, new Size(DesktopWidth, DesktopHeight), CopyPixelOperation.SourceCopy);
+        //                    }
 
-                            // Post the bitmap to the remote URL
-                            await PostImageAsync(screenID++, bitmap, url);
+        //                    // Post the bitmap to the remote URL
+        //                    await PostImageAsync(screenID++, bitmap, url);
 
-                            // Save the bitmap to a file
-                            if (!string.IsNullOrWhiteSpace(filePath))
-                            {
-                                // Create a unique file path for each screen
-                                string screenFilePath = Path.Combine(Path.GetDirectoryName(filePath), $"{Path.GetFileNameWithoutExtension(filePath)}_{screen.DeviceName.Replace("\\", "").Replace(".", "")}{Path.GetExtension(filePath)}");
-                                bitmap.Save(screenFilePath, ImageFormat.Png);
-                            }
-                        }
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                log.ErrorFormat("An error occurred while capturing the screenshot: {0}", ex.Message);
-            }
-        }
+        //                    // Save the bitmap to a file
+        //                    if (!string.IsNullOrWhiteSpace(filePath))
+        //                    {
+        //                        // Create a unique file path for each screen
+        //                        string screenFilePath = Path.Combine(Path.GetDirectoryName(filePath), $"{Path.GetFileNameWithoutExtension(filePath)}_{screen.DeviceName.Replace("\\", "").Replace(".", "")}{Path.GetExtension(filePath)}");
+        //                        bitmap.Save(screenFilePath, ImageFormat.Png);
+        //                    }
+        //                }
+        //            }
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        log.ErrorFormat("An error occurred while capturing the screenshot: {0}", ex.Message);
+        //    }
+        //}
 
-        private async Task PostImageAsync(int screenID, Bitmap bitmap, string url)
-        {
-            // Extract the host from the URL
-            Uri uri = new Uri(url);
-            string host = uri.Host;
+        //private async Task PostImageAsync(int screenID, Bitmap bitmap, string url)
+        //{
+        //    // Extract the host from the URL
+        //    Uri uri = new Uri(url);
+        //    string host = uri.Host;
 
-            using (HttpClient client = new HttpClient())
-            {
-                using (var content = new MultipartFormDataContent())
-                {
-                    // Convert the bitmap to a memory stream
-                    using (var memoryStream = new MemoryStream())
-                    {
-                        bitmap.Save(memoryStream, ImageFormat.Png);
-                        memoryStream.Seek(0, SeekOrigin.Begin); // Reset the stream position
+        //    using (HttpClient client = new HttpClient())
+        //    {
+        //        using (var content = new MultipartFormDataContent())
+        //        {
+        //            // Convert the bitmap to a memory stream
+        //            using (var memoryStream = new MemoryStream())
+        //            {
+        //                bitmap.Save(memoryStream, ImageFormat.Png);
+        //                memoryStream.Seek(0, SeekOrigin.Begin); // Reset the stream position
 
-                        // Create the stream content for the multipart form
-                        var streamContent = new StreamContent(memoryStream);
-                        streamContent.Headers.ContentType = new MediaTypeHeaderValue("image/png");
-                        content.Add(streamContent, "image", string.Format("screenshot_{0}_{1:MMddHHmm}.png", screenID, DateTime.Now));
-                        client.DefaultRequestHeaders.Host = host;
+        //                // Create the stream content for the multipart form
+        //                var streamContent = new StreamContent(memoryStream);
+        //                streamContent.Headers.ContentType = new MediaTypeHeaderValue("image/png");
+        //                content.Add(streamContent, "image", string.Format("screenshot_{0}_{1:MMddHHmm}.png", screenID, DateTime.Now));
+        //                client.DefaultRequestHeaders.Host = host;
 
-                        // Send the POST request
-                        HttpResponseMessage response = await client.PostAsync(url, content);
-                        if (response.IsSuccessStatusCode)
-                        {
-                            log.DebugFormat("Image uploaded successfully.");
-                        }
-                        else
-                        {
-                            log.ErrorFormat("Image upload failed: {0}", response.StatusCode);
-                        }
-                    }
-                }
-            }
-        }
+        //                // Send the POST request
+        //                HttpResponseMessage response = await client.PostAsync(url, content);
+        //                if (response.IsSuccessStatusCode)
+        //                {
+        //                    log.DebugFormat("Image uploaded successfully.");
+        //                }
+        //                else
+        //                {
+        //                    log.ErrorFormat("Image upload failed: {0}", response.StatusCode);
+        //                }
+        //            }
+        //        }
+        //    }
+        //}
 
-        private async Task PostJsonAsync(string jsonData, string url)
-        {
-            try
-            {
-                using (HttpClient client = new HttpClient())
-                {
-                    var content = new StringContent(jsonData, Encoding.UTF8, "application/json");
-                    HttpResponseMessage response = await client.PostAsync(url, content);
+        //private async Task PostJsonAsync(string jsonData, string url)
+        //{
+        //    try
+        //    {
+        //        using (HttpClient client = new HttpClient())
+        //        {
+        //            var content = new StringContent(jsonData, Encoding.UTF8, "application/json");
+        //            HttpResponseMessage response = await client.PostAsync(url, content);
 
-                    response.EnsureSuccessStatusCode();
+        //            response.EnsureSuccessStatusCode();
 
-                    string responseBody = await response.Content.ReadAsStringAsync();
-                    log.DebugFormat("Response: {0}", responseBody);
-                }
-            }
-            catch (HttpRequestException e)
-            {
-                log.ErrorFormat("Request error: {0}", e.Message);
-            }
-        }
+        //            string responseBody = await response.Content.ReadAsStringAsync();
+        //            log.DebugFormat("Response: {0}", responseBody);
+        //        }
+        //    }
+        //    catch (HttpRequestException e)
+        //    {
+        //        log.ErrorFormat("Request error: {0}", e.Message);
+        //    }
+        //}
     }
 }
 
