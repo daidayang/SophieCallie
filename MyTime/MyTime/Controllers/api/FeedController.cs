@@ -169,7 +169,7 @@ namespace MyTime.Controllers.api
             log.Debug("Get method called.");
 
             MyTaasks ret = new();
-            if (DateTime.Now.Hour > 16 && (id == "1" || id == "2"))
+            if (DateTime.Now.Hour >= 16 && (id == "1" || id == "2"))
             {
                 ret.Tasks =
                 [
