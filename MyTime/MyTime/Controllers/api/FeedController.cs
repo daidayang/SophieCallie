@@ -169,11 +169,18 @@ namespace MyTime.Controllers.api
             log.Debug("Get method called.");
 
             MyTaasks ret = new();
-            ret.Tasks =
-            [
-                new MyTimeTaskItem { TaskName = "GetTaskList", Options = "moviesjoy" },
-                new MyTimeTaskItem { TaskName = "TakeScreenShot", Options = "youtube" },
-            ];
+            if (DateTime.Now.Hour > 16 && (id == "1" || id == "2"))
+            {
+                ret.Tasks =
+                [
+                    new MyTimeTaskItem { TaskName = "GetTaskList", Options = "moviesjoy" },
+                    new MyTimeTaskItem { TaskName = "TakeScreenShot", Options = "youtube" }
+                ];
+            }
+            else
+            {
+                ret.Tasks = [];
+            }
             return ret;
         }
 
