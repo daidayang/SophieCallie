@@ -1,0 +1,61 @@
+    1  sudo apt update
+    2  sudo apt upgrade
+    5  sudo apt install openssh-server
+
+    6  sudo apt-get install g++ freeglut3-dev build-essential libx11-dev libxmu-dev libxi-dev libglu1-mesa libglu1-mesa-dev
+    7  sudo add-apt-repository ppa:graphics-drivers/ppa
+    8  sudo apt update
+
+    9  sudo apt install libnvidia-common-470
+   10  sudo apt install libnvidia-gl-470
+   11  sudo apt install nvidia-driver-470
+
+   12  sudo apt-key adv --fetch-keys http://developer.download.nvidia.com/compute/cuda/repos/ubuntu2004/x86_64/3bf863cc.pub
+   13  echo "deb https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2004/x86_64 /" | sudo tee /etc/apt/sources.list.d/cuda.list
+   14  sudo apt-get update
+
+   23  sudo apt install cuda-toolkit-11-2
+
+   27  echo 'export PATH=/usr/local/cuda-11.2/bin:$PATH' >> ~/.bashrc
+   28  echo 'export LD_LIBRARY_PATH=/usr/local/cuda-11.2/lib64:$LD_LIBRARY_PATH' >> ~/.bashrc
+   29  source ~/.bashrc
+   30  sudo ldconfig
+
+   32  nvcc -V
+   33  sudo reboot
+   35  nvidia-smi
+
+https://gist.github.com/hiraksarkar/b4aff12ccb0f1f1a7cb301f365892f6a
+
+
+   42  tar -xvf cudnn-11.2-linux-x64-v8.1.1.33.tgz
+   43  ls cuda/include
+   44  sudo cp cuda/include/cudnn*.h /usr/local/cuda-11.2/include/
+   45  sudo cp cuda/lib64/libcudnn* /usr/local/cuda-11.2/lib64/
+   46  sudo chmod a+r /usr/local/cuda-11.2/include/cudnn*.h /usr/local/cuda-11.2/lib64/libcudnn*
+
+
+  107  bash ~/Downloads/Anaconda3-2024.10-1-Linux-x86_64.sh 
+   57  source ~/.bashrc
+   58  conda activate
+
+   60  conda create --name tf_gpu -c conda-forge python=3.7.12
+   61  conda activate tf_gpu
+   62  conda search tensorflow
+   63  conda info
+
+   66  pip install tensorflow==2.11.0
+  100  python -c "import tensorflow as tf; print('GPU Available:', tf.test.is_gpu_available())"
+   83  conda install pandas
+   90  pip install tensorflow_addons
+   92  pip install matplotlib
+   94  conda install seaborn
+   95  pip install tqdm
+   96  pip install scikit-learn
+   97  conda install ipython
+   97  conda install pyarrow
+   98  conda install -c conda-forge ipywidgets
+  110  pip install typing-extensions --upgrade
+
+  111  python train.py
+
