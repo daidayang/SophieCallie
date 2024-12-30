@@ -1,0 +1,9 @@
+  316  conda create -n camera
+  324  conda activate camera
+  325  conda install -c conda-forge opencv
+  326  conda install tensorflow
+  328  conda install mediapipe
+  339  pip install --upgrade protobuf
+  341  conda install pandas
+  345  conda install pyarrow
+  347  conda install fastparquet
