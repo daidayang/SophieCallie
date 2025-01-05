@@ -3,15 +3,23 @@ import mediapipe as mp
 import pandas as pd
 import numpy as np
 import time
-import tensorflow as tf
-# from dotenv import load_dotenv ???
+import tflite_runtime.interpreter as tflite
 import os
 
-# load_dotenv()  ???
+
+# Constants
+PAUSE_THRESHOLD = 0.025  # 2.5cm in normalized space
+PAUSE_DURATION = 0.25  # 0.25 seconds
+
+# Variables
+previous_left_hand_landmarks = None
+previous_right_hand_landmarks = None
+pause_start_time = None
+hands_paused = False
 
 # Initialize the TensorFlow Lite interpreter
-interpreter = tf.lite.Interpreter(model_path="model.tflite")
-interpreter.allocate_tensors()
+interpreter = tflite.Interpreter("model.tflite")
+found_signatures = list(interpreter.get_signature_list().keys())
 pred_fn = interpreter.get_signature_runner("serving_default")
 
 # Load training data
@@ -25,13 +33,24 @@ mp_drawing = mp.solutions.drawing_utils
 mp_drawing_styles = mp.solutions.drawing_styles
 mp_holistic = mp.solutions.holistic
 
+
+# Helper function to calculate the Euclidean distance
+def calculate_distance(landmark1, landmark2):
+    return 1.0
+    return np.sqrt((landmark1.x - landmark2.x)**2 +
+                   (landmark1.y - landmark2.y)**2 +
+                   (landmark1.z - landmark2.z)**2)
+
 def create_frame_landmark_df(results, frame, xyz):
+    global previous_left_hand_landmarks, previous_right_hand_landmarks, pause_start_time, hands_paused
+    all_hands_paused = True
+
     xyz_skel = (xyz[["type", "landmark_index"]].drop_duplicates().reset_index(drop=True).copy())
     face = pd.DataFrame()
     pose = pd.DataFrame()
     left_hand = pd.DataFrame()
     right_hand = pd.DataFrame()
-    
+
     if results.face_landmarks:
         for i, point in enumerate(results.face_landmarks.landmark):
             face.loc[i, ["x", "y", "z"]] = [point.x, point.y, point.z]
@@ -44,15 +63,58 @@ def create_frame_landmark_df(results, frame, xyz):
     if results.right_hand_landmarks:
         for i, point in enumerate(results.right_hand_landmarks.landmark):
             right_hand.loc[i, ["x", "y", "z"]] = [point.x, point.y, point.z]
-    
+
     face = face.reset_index().rename(columns={"index": "landmark_index"}).assign(type="face")
     pose = pose.reset_index().rename(columns={"index": "landmark_index"}).assign(type="pose")
     left_hand = left_hand.reset_index().rename(columns={"index": "landmark_index"}).assign(type="left_hand")
     right_hand = right_hand.reset_index().rename(columns={"index": "landmark_index"}).assign(type="right_hand")
-    
+
+
+    # BEGIN detect hand movement
+
+    print( left_hand )
+
+    max_movement_left = 0
+    max_movement_right = 0
+
+    if previous_left_hand_landmarks is not None:
+        movements_left_hand = [
+            calculate_distance(prev, curr)
+            for prev, curr in zip(previous_left_hand_landmarks, left_hand)
+        ]
+        max_movement_left = max(movements_left_hand)
+
+    if previous_right_hand_landmarks is not None:
+        movements_right_hand = [
+            calculate_distance(prev, curr)
+            for prev, curr in zip(previous_right_hand_landmarks, right_hand)
+        ]
+        max_movement_right = max(movements_right_hand)
+
+    # Check if the hand has paused
+    if max_movement_right >= PAUSE_THRESHOLD and max_movement_left >= PAUSE_THRESHOLD:
+        all_hands_paused = False
+
+    if all_hands_paused:
+        if pause_start_time is None:
+            pause_start_time = time.time()
+        elif time.time() - pause_start_time >= PAUSE_DURATION:
+            hands_paused = True
+    else:
+        pause_start_time = None
+        hands_paused = False
+
+    previous_left_hand_landmarks = left_hand
+    previous_right_hand_landmarks = right_hand
+
+    print(f"hands_paused: {hands_paused}")
+
+    # END detect hand movement
+
+
     landmarks = pd.concat([face, pose, left_hand, right_hand]).reset_index(drop=True)
     landmarks = xyz_skel.merge(landmarks, on=["type", "landmark_index"], how="left").assign(frame=frame)
-    
+
     return landmarks
 
 def get_display_message_from_api(recognised_words):
@@ -141,7 +203,9 @@ def do_capture_loop(xyz, pred_fn):
             # Scaling up the camera feed
             image = cv2.resize(image, (scaled_width, scaled_height), interpolation=cv2.INTER_LINEAR)
             image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+
             results = holistic.process(image)
+
             landmarks = create_frame_landmark_df(results, elapsed_time, xyz)
             all_landmarks.append(landmarks)
 
@@ -161,7 +225,7 @@ def do_capture_loop(xyz, pred_fn):
                 landmark_drawing_spec=mp_drawing_styles.get_default_pose_landmarks_style()
             )
 
-            if current_time - last_prediction_time >= 3:
+            if False and current_time - last_prediction_time >= 3:
                 if all_landmarks:
                     concatenated_landmarks = pd.concat(all_landmarks).reset_index(drop=True)
                     concatenated_landmarks.to_parquet("out.parquet")

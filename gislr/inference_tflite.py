@@ -30,8 +30,8 @@ SIGN2ORD = train[['sign', 'sign_ord']].set_index('sign').squeeze().to_dict()
 ORD2SIGN = train[['sign_ord', 'sign']].set_index('sign_ord').squeeze().to_dict()
 
 
-display(train.head(5))
-display(train.info())
+# display(train.head(5))
+# display(train.info())
 
 # Source: https://www.kaggle.com/competitions/asl-signs/overview/evaluation
 ROWS_PER_FRAME = 543  # number of landmarks per frame
@@ -40,12 +40,13 @@ def load_relevant_data_subset(pq_path):
     data_columns = ['x', 'y', 'z']
     data = pd.read_parquet(pq_path, columns=data_columns)
     n_frames = int(len(data) / ROWS_PER_FRAME)
+    print( f"data len: {len(data)}, frames: {n_frames}")
     data = data.values.reshape(n_frames, ROWS_PER_FRAME, len(data_columns))
     return data.astype(np.float32)
 
-print( train['file_path'].values[66] )
+# print( train['file_path'].values[2] )
 
-demo_raw_data = load_relevant_data_subset(train['file_path'].values[66])
+demo_raw_data = load_relevant_data_subset(train['file_path'].values[2])
 print(f'demo_raw_data shape: {demo_raw_data.shape}, dtype: {demo_raw_data.dtype}')
 # demo_output = tflite_keras_model(demo_raw_data)["outputs"]
 # print(f'demo_output shape: {demo_output.shape}, dtype: {demo_output.dtype}')
@@ -56,7 +57,7 @@ output = prediction_fn(inputs=demo_raw_data)
 sign = output['outputs'].argmax()
 
 print("PRED : ", ORD2SIGN.get(sign), f'[{sign}]')
-print("TRUE : ", train.sign.values[66], f'[{train.sign_ord.values[66]}]')
+print("TRUE : ", train.sign.values[2], f'[{train.sign_ord.values[2]}]')
 
 # print("----------------")
 # print(demo_raw_data)
