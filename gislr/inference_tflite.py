@@ -48,6 +48,7 @@ def load_relevant_data_subset(pq_path):
 
 demo_raw_data = load_relevant_data_subset(train['file_path'].values[2])
 print(f'demo_raw_data shape: {demo_raw_data.shape}, dtype: {demo_raw_data.dtype}')
+print(demo_raw_data[1])
 # demo_output = tflite_keras_model(demo_raw_data)["outputs"]
 # print(f'demo_output shape: {demo_output.shape}, dtype: {demo_output.dtype}')
 # demo_prediction = demo_output.numpy().argmax()

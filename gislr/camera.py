@@ -7,15 +7,8 @@ import tflite_runtime.interpreter as tflite
 import os
 
 
-# Constants
-PAUSE_THRESHOLD = 0.025  # 2.5cm in normalized space
-PAUSE_DURATION = 0.25  # 0.25 seconds
-
 # Variables
-previous_left_hand_landmarks = None
-previous_right_hand_landmarks = None
-pause_start_time = None
-hands_paused = False
+last_frame_save_time = None
 
 # Initialize the TensorFlow Lite interpreter
 interpreter = tflite.Interpreter("model.tflite")
@@ -34,95 +27,162 @@ mp_drawing_styles = mp.solutions.drawing_styles
 mp_holistic = mp.solutions.holistic
 
 
+def load_relevant_data_subset(pq_path):
+    data_columns = ['x', 'y', 'z']
+    data = pd.read_parquet(pq_path, columns=data_columns)
+    n_frames = int(len(data) / ROWS_PER_FRAME)
+    print( f"data len: {len(data)}, frames: {n_frames}")
+    data = data.values.reshape(n_frames, ROWS_PER_FRAME, len(data_columns))
+    return data.astype(np.float32)
+
 # Helper function to calculate the Euclidean distance
 def calculate_distance(landmark1, landmark2):
-    return 1.0
-    return np.sqrt((landmark1.x - landmark2.x)**2 +
-                   (landmark1.y - landmark2.y)**2 +
-                   (landmark1.z - landmark2.z)**2)
+    # print( f"landmark2.len: {len(landmark2)}" )
+    # print( landmark2 )
+    # return 1.0
 
-def create_frame_landmark_df(results, frame, xyz):
-    global previous_left_hand_landmarks, previous_right_hand_landmarks, pause_start_time, hands_paused
+    if hasattr(landmark1, 'x') and hasattr(landmark2, 'x'):
+        return np.sqrt((landmark1.x - landmark2.x)**2 +
+                        (landmark1.y - landmark2.y)**2 +
+                        (landmark1.z - landmark2.z)**2)
+    return -1
+
+def create_frame_landmark_df(results, frame, xyz, hands_paused):
+
+    if not hasattr( create_frame_landmark_df, "pause_start_time"):
+        create_frame_landmark_df.previous_left_hand_landmarks = None
+        create_frame_landmark_df.previous_right_hand_landmarks = None
+        create_frame_landmark_df.pause_start_time = None
+        create_frame_landmark_df.PAUSE_THRESHOLD = 0.025  # 2.5cm in normalized space
+        create_frame_landmark_df.PAUSE_DURATION = 0.25  # 0.25 seconds
+
+    hands_staddy_paused = hands_paused
+    max_movement_left = -1.0
+    max_movement_right = -1.0
     all_hands_paused = True
 
-    xyz_skel = (xyz[["type", "landmark_index"]].drop_duplicates().reset_index(drop=True).copy())
-    face = pd.DataFrame()
-    pose = pd.DataFrame()
-    left_hand = pd.DataFrame()
-    right_hand = pd.DataFrame()
+    has_complete_data = True
+
+    # Create an empty DataFrame with the specified structure and data types
+    ndf = pd.DataFrame(columns=["x", "y", "z"], dtype=np.float32)
+    # ndf = pd.DataFrame(columns=["x", "y", "z", "type"], dtype=np.float32)
+    # ndf["type"] = ndf["type"].astype(str)  # Explicitly set the 'type' column to string
+
+    # print("\nData type 00:")
+    # print(ndf["x"].dtype)
+
 
     if results.face_landmarks:
-        for i, point in enumerate(results.face_landmarks.landmark):
-            face.loc[i, ["x", "y", "z"]] = [point.x, point.y, point.z]
-    if results.pose_landmarks:
-        for i, point in enumerate(results.pose_landmarks.landmark):
-            pose.loc[i, ["x", "y", "z"]] = [point.x, point.y, point.z]
+
+        # Insert data from face_landmarks with type "Face"
+        for i, row in enumerate(results.face_landmarks.landmark):
+            if hasattr(row, 'x'):
+                ndf = pd.concat([ndf, pd.DataFrame([[row.x, row.y, row.z]], columns=ndf.columns)], ignore_index=True)
+                # ndf.loc[len(ndf)] = [row.x, row.y, row.z]
+                # ndf = pd.concat([ndf, pd.DataFrame([[row.x, row.y, row.z, "Face"]], columns=ndf.columns)], ignore_index=True)
+
+        # Check the DataFrame after insertion
+        # print("\nDataFrame after inserting data:")
+        # print(ndf)
+        # print("\nData types:")
+        # print(ndf.dtypes)
+
+        # print("\nData type 01:")
+        # print(ndf["x"].dtype)
+
+    # print(f'data shape 1: {ndf.shape}')
+
+
+
     if results.left_hand_landmarks:
-        for i, point in enumerate(results.left_hand_landmarks.landmark):
-            left_hand.loc[i, ["x", "y", "z"]] = [point.x, point.y, point.z]
+
+        if create_frame_landmark_df.previous_left_hand_landmarks is not None:
+            movements_left_hand = [
+                calculate_distance(prev, curr)
+                for prev, curr in zip(create_frame_landmark_df.previous_left_hand_landmarks, results.left_hand_landmarks.landmark)
+            ]
+            max_movement_left = max(movements_left_hand)
+
+        # print(f"left max: {max_movement_left}")
+        create_frame_landmark_df.previous_left_hand_landmarks = results.left_hand_landmarks.landmark
+
+        # Insert data from pose_landmarks with type "Left_Hand"
+        for i, row in enumerate(results.left_hand_landmarks.landmark):
+            if hasattr(row, 'x'):
+                ndf = pd.concat([ndf, pd.DataFrame([[row.x, row.y, row.z]], columns=ndf.columns)], ignore_index=True)
+                # ndf = pd.concat([ndf, pd.DataFrame([[row.x, row.y, row.z, "Left_Hand"]], columns=ndf.columns)], ignore_index=True)
+
+    # print(f'data shape 2: {ndf.shape}')
+
+
+
+    if results.pose_landmarks:
+
+        # Insert data from pose_landmarks with type "Pose"
+        for i, row in enumerate(results.pose_landmarks.landmark):
+            if hasattr(row, 'x'):
+                ndf = pd.concat([ndf, pd.DataFrame([[row.x, row.y, row.z]], columns=ndf.columns)], ignore_index=True)
+                # ndf = pd.concat([ndf, pd.DataFrame([[row.x, row.y, row.z, "Pose"]], columns=ndf.columns)], ignore_index=True)
+
+    # print(f'data shape 3: {ndf.shape}')
+
+
+
     if results.right_hand_landmarks:
-        for i, point in enumerate(results.right_hand_landmarks.landmark):
-            right_hand.loc[i, ["x", "y", "z"]] = [point.x, point.y, point.z]
 
-    face = face.reset_index().rename(columns={"index": "landmark_index"}).assign(type="face")
-    pose = pose.reset_index().rename(columns={"index": "landmark_index"}).assign(type="pose")
-    left_hand = left_hand.reset_index().rename(columns={"index": "landmark_index"}).assign(type="left_hand")
-    right_hand = right_hand.reset_index().rename(columns={"index": "landmark_index"}).assign(type="right_hand")
+        if create_frame_landmark_df.previous_right_hand_landmarks is not None:
+            movements_right_hand = [
+                calculate_distance(prev, curr)
+                for prev, curr in zip(create_frame_landmark_df.previous_right_hand_landmarks, results.right_hand_landmarks.landmark)
+            ]
+            max_movement_right = max(movements_right_hand)
+
+        # print(f"right max: {max_movement_right}")
+        create_frame_landmark_df.previous_right_hand_landmarks = results.right_hand_landmarks.landmark
+
+        # Insert data from pose_landmarks with type "Right_Hand"
+        for i, row in enumerate(results.right_hand_landmarks.landmark):
+            if hasattr(row, 'x'):
+                ndf = pd.concat([ndf, pd.DataFrame([[row.x, row.y, row.z]], columns=ndf.columns)], ignore_index=True)
+                # ndf = pd.concat([ndf, pd.DataFrame([[row.x, row.y, row.z, "Right_Hand"]], columns=ndf.columns)], ignore_index=True)
+
+    # print(f'data shape 4: {ndf.shape}')
 
 
-    # BEGIN detect hand movement
+    # Check the DataFrame after insertion
+    # print("\nDataFrame after inserting data:")
+    # print(ndf)
+    # print("\nData types:")
+    # print(ndf.dtypes)
 
-    print( left_hand )
-
-    max_movement_left = 0
-    max_movement_right = 0
-
-    if previous_left_hand_landmarks is not None:
-        movements_left_hand = [
-            calculate_distance(prev, curr)
-            for prev, curr in zip(previous_left_hand_landmarks, left_hand)
-        ]
-        max_movement_left = max(movements_left_hand)
-
-    if previous_right_hand_landmarks is not None:
-        movements_right_hand = [
-            calculate_distance(prev, curr)
-            for prev, curr in zip(previous_right_hand_landmarks, right_hand)
-        ]
-        max_movement_right = max(movements_right_hand)
 
     # Check if the hand has paused
-    if max_movement_right >= PAUSE_THRESHOLD and max_movement_left >= PAUSE_THRESHOLD:
+
+    # print(f"hand max movement: {max_movement_left}, {max_movement_right}")
+    if max_movement_right >= create_frame_landmark_df.PAUSE_THRESHOLD and max_movement_left >= create_frame_landmark_df.PAUSE_THRESHOLD:
         all_hands_paused = False
 
     if all_hands_paused:
-        if pause_start_time is None:
-            pause_start_time = time.time()
-        elif time.time() - pause_start_time >= PAUSE_DURATION:
-            hands_paused = True
+        if create_frame_landmark_df.pause_start_time is None:
+            create_frame_landmark_df.pause_start_time = time.time()
+        elif time.time() - create_frame_landmark_df.pause_start_time >= create_frame_landmark_df.PAUSE_DURATION:
+            hands_staddy_paused = True
     else:
-        pause_start_time = None
-        hands_paused = False
+        create_frame_landmark_df.pause_start_time = None
+        hands_staddy_paused = False
 
-    previous_left_hand_landmarks = left_hand
-    previous_right_hand_landmarks = right_hand
+    print(f"hands_paused: {hands_paused}, data shape: {ndf.shape}, len: {len(ndf)}")
 
-    print(f"hands_paused: {hands_paused}")
-
-    # END detect hand movement
+    return ndf.astype(np.float32), hands_staddy_paused
 
 
-    landmarks = pd.concat([face, pose, left_hand, right_hand]).reset_index(drop=True)
-    landmarks = xyz_skel.merge(landmarks, on=["type", "landmark_index"], how="left").assign(frame=frame)
-
-    return landmarks
 
 def get_display_message_from_api(recognised_words):
     GOOGLE_API_KEY=os.getenv("GOOGLE_API_KEY")
-    genai.configure(api_key=GOOGLE_API_KEY) 
-    
+    genai.configure(api_key=GOOGLE_API_KEY)
+
     model = genai.GenerativeModel('gemini-pro')
-    
+
     prompt = f"""
             Objective:
             You have developed an isolated American Sign Language (ASL) word recognition model. At the end of each run, the model stores the recognized words in a list. However, the words may not necessarily be in the correct order. Your objective is to utilize these recognized words to construct a coherent and meaningful English sentence. The resulting sentence should be as simple as possible while still accurately conveying the intended meaning.
@@ -147,9 +207,9 @@ def get_display_message_from_api(recognised_words):
 
             Here is the actual input for which you have to produce the relevant output: recognised_words = {' '.join(recognised_words)}
             """
-    
+
     response = model.generate_content(prompt)
-    
+
     return response.text
 
 def load_relevant_data_subset(pq_path):
@@ -161,6 +221,7 @@ def load_relevant_data_subset(pq_path):
     return data.astype(np.float32)
 
 def do_capture_loop(xyz, pred_fn):
+    hands_paused = True
     all_landmarks = []
     cap = cv2.VideoCapture(0)
     ret, frame = cap.read()  # Check if the camera is working and get a frame to read dimensions
@@ -168,7 +229,7 @@ def do_capture_loop(xyz, pred_fn):
         print("Failed to grab frame")
         cap.release()
         return
-    
+
     frame_height, frame_width = frame.shape[:2]
     scale_factor = 1.0  # Scale the image to fill the window more
     scaled_height = int(frame_height * scale_factor)
@@ -179,7 +240,7 @@ def do_capture_loop(xyz, pred_fn):
     font = cv2.FONT_HERSHEY_SIMPLEX
     font_scale = 2.5  # Larger font size
     text_thickness = 3
-    
+
     start_time = time.time()
     font = cv2.FONT_HERSHEY_SIMPLEX
     font_scale = 2.0
@@ -190,7 +251,7 @@ def do_capture_loop(xyz, pred_fn):
     unique_signs = []
     sign_name = ""
 
-    with mp_holistic.Holistic(min_detection_confidence=0.5, min_tracking_confidence=0.5) as holistic:
+    with mp_holistic.Holistic(min_detection_confidence=0.5, min_tracking_confidence=0.5, use_gpu=True) as holistic:
         while cap.isOpened():
             current_time = time.time()
             elapsed_time = int(current_time - start_time)
@@ -205,10 +266,6 @@ def do_capture_loop(xyz, pred_fn):
             image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
 
             results = holistic.process(image)
-
-            landmarks = create_frame_landmark_df(results, elapsed_time, xyz)
-            all_landmarks.append(landmarks)
-
             image = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
 
             mp_drawing.draw_landmarks(
@@ -225,11 +282,20 @@ def do_capture_loop(xyz, pred_fn):
                 landmark_drawing_spec=mp_drawing_styles.get_default_pose_landmarks_style()
             )
 
-            if False and current_time - last_prediction_time >= 3:
+
+            landmarks, hands_paused = create_frame_landmark_df(results, elapsed_time, xyz, hands_paused)
+
+            # only when all landmarks are acquired
+            if len(landmarks) == 543:
+                print(f'len(all_landmarks): {len(all_landmarks)}')
+                all_landmarks.append(landmarks)
+
+            if current_time - last_prediction_time >= 3:
                 if all_landmarks:
                     concatenated_landmarks = pd.concat(all_landmarks).reset_index(drop=True)
                     concatenated_landmarks.to_parquet("out.parquet")
                     xyz_np = load_relevant_data_subset("out.parquet")
+
                     p = pred_fn(inputs=xyz_np)
                     sign = p['outputs'].argmax()
                     sign_name = ORD2SIGN[sign]
