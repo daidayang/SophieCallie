@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr" class="WsIbe WsIbeIndex">
+
+<title>Rebooking</title>
+
+<style>
+    html {
+        text-align: center;
+    }
+
+    .logo-img {
+        margin-top: 20px;
+        width: 80px;
+    }
+
+    #Valencia {
+        font-family: 'Times New Roman', Times, serif;
+        text-transform: uppercase;
+        margin-top: .35em;
+    }
+
+    .main-img {
+        width: 1000px;
+    }
+
+    .reservation {
+        background-color: #F2F2F2;
+        width: 1000px;
+        margin: 0 auto;
+
+    }
+
+    .reservation h1 {
+        font-family: Georgia;
+        font-weight: normal;
+        width: 700px;
+        margin: 0px;
+        padding: 25px 150px;
+
+    }
+
+    hr {
+        width: 1000px;
+        height: 4px;
+        border: 0;
+        background-color: #CDC1AA;
+    }
+
+    .re-booking-para {
+        width: 900px;
+        margin: 0 auto;
+        padding: 10px 50px 0 50px;
+    }
+
+    #GFN {
+        text-align: left;
+    }
+
+    .re-booking-para p {
+        text-align: left;
+        font-size: 26px;
+        font-family: Arial;
+        color: #5C5C5C;
+    }
+
+    .add-on-header {
+        width: 700px;
+        margin: 0 auto;
+        padding: 25px 150px;
+    }
+
+    .add-on-header h1 {
+        font-size: 35px;
+        font-family: Georgia;
+        font-weight: normal;
+    }
+
+    .linger-container{
+        display: flex;
+        justify-content: center;
+    }
+
+    .linger p{
+        width: 500px;
+        font-size: 26px;
+        font-family: Arial;
+        color: #5C5C5C;
+    }
+
+    .linger h2 {
+        width: 500px;
+        font-size: 30px;
+        font-family: Arial;
+        color: #5C5C5C;
+    }
+
+    #LateCheckOut{
+        height: 300px;
+        margin-right: 25px;
+    }
+
+    #details-button{
+        margin-top: 50px;
+        background-color: #CDC1AA;
+        border-width: 0;
+        color: white;
+        text-transform: uppercase;
+        height: 70px;
+        width: 800px;
+        font-size: 25px;
+    }
+
+    .closing {
+        width: 800px;
+        text-align: left;
+        margin: 0 auto;
+    }
+
+    .closing-text{
+        margin: 5px 0;
+        font-size: 26px;
+        font-family: Arial;
+        color: #5C5C5C;
+    }
+
+    #closing-sc{
+        margin: 20px 0;
+    }
+
+    #closing-fc{
+        text-align: left;
+        width: 800px;
+        margin-top: 30px;
+    }
+
+    .bottom-hr{
+        margin-top: 75px;
+    }
+
+    .footer {
+        padding: 20px 0 30px 0;
+        margin: 0 auto;
+        font-size: 20px;
+        font-family: Arial;
+        color: #5C5C5C;
+    }
+
+    #footer-ls {
+        width: 350px;
+        margin: 0 auto;
+    }
+
+</style>
+
+<header>
+    <div class="header">
+        <img src="logo.png" class="logo-img">
+        <p id="Valencia">Valencia Hotel Group</p>
+    </div>
+</header>
+
+<body>
+    <div class="reservation">
+        <img src="main.jpg" class="main-img">
+        <h1>Would you reconsider re-booking your reservation?</h1>
+        <hr>
+    </div>
+
+    <div class="re-booking-para">
+        <p id="GFN">(GuestFirstName),</p>
+        <p>We noticed your recently cancelled your reservation at our hotel from (DateCheckIn)
+            to (DateCheckOut). Nonetheless we appreciate your interest in our hotel, and we value
+            you as a potential guest. Of course we understand that plans change and for whatever
+            reason you had cancelled, but please allow us to offer you the following incentive if
+            you reconsider and re-book your reservation.</p>
+    </div>
+
+    <div class="add-on">
+        <div class="add-on-header">
+            <h1>Enjoy this free add-on if you re-book your reservation today!</h1>
+        </div>
+        <div class="linger-container">
+            <img id="LateCheckOut"src="LateCheckOut.jpg">
+            <div class="linger">
+                <h2>Linger a Little Longer</h2>
+                <p>Guarantee late checkout of 3 pm. We hate goodbyes so we invite you to linger a little longer. Sleep
+                    in, sleep it off, and start your day when you are
+                    good and ready! Until we meet again, this is not goodbye, this is see you again
+                    soon.
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <div class="details">
+        <input type="button" id="details-button"onclick="window.location.href='https://www.w3docs.com';" value="Click here for details" />
+    </div>
+
+    <div class="closing">
+        <p class="closing-text" id="closing-fc">In any case, thank you for considering (HotelName)! If there is anything else we can do
+            to
+            convince you to book your next stay at our hotel, please call us 123-123-1234.
+        </p>
+        <p class="closing-text" id="closing-sc">Sincerely,</p>
+        <p class="closing-text">FirstName LastName</p>
+        <p class="closing-text">General Manager</p>
+    </div>
+
+    <hr class="bottom-hr">
+
+    <div class="footer">
+        <p>This email was sent to: (guestemail@domain.com)</p>
+        <p id="footer-ls">This email was sent by (HotelName).
+            1234 StreetName, City, ST 12345
+        </p>
+    </div>
+
+</body>

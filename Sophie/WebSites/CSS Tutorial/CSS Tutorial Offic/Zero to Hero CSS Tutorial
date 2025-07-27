@@ -1,0 +1,152 @@
+Selectors: from least specific to most specific
+
+YOU CAN ADD MULTIPLE CLASSES SEPERATED BY A SPACE
+EXAMPLE:
+<a class= subtitle subtitle-subtitle></a>
+BOTH ARE DIFFERENT CLASSES BUT BELONG TO SAME A
+very small number of attributes
+
+            CSS FORMAT
+        selector {
+            property: value;
+            property2: value2;
+        }
+
+
+(IN LINE (html) STYLE IN THE HTML OVERRIDES ALL OTHER SELECTORS)
+
+Element Selector
+- You can select entire elements without any special characters.
+- This applies to all the elements with that tag on the page.
+- It ranks on the bottom of the specificity scale.\
+
+Class Selector
+- This is used to select elements with a certain class name.
+- can be used on any and all elements with that class.
+- Can be used multiple times, and is select with . (PERIOD) symbol.
+
+ID Selector
+- This can be used to select elements with a certain ID name.
+- Can be used on any and all elements with that ID
+- unlike classes, it can only be used on one element at a time, and is selected with the #  symbol. However, it is possible to use more than once.
+
+
+Html: 
+<td> a table
+<a> tag that gives link to websites
+example:
+<a href ="http://www.google.com">Click here to go to Google</a>
+<textarea> box where you input text ()
+<ul> unordered list (typically a parent)
+<li> listed item (typically a child)
+<ol> ordered list (parent"basically ul with bullet points"(ordered))
+
+
+            CSS:
+
+Color: changes color of selecter id, class, element, etc
+Border: Adds border around selected item
+Background: adds background to selected item
+list-style-position: inside; Allows bullet points to be apart of li
+
+
+            Psuedo Selectors:
+
+Very specific Selectors that is added after a (element, class, id) selector
+examples:
+- h2:hover {
+    color: red; CHANGES COLOR WHEN MOUSE HOVERS OVER TEXT
+}
+
+- Another psuedo selector is First Child and Last Child / nth child(#)
+- PARENT CHILD EXAMPLE :
+<ul> (parent)
+    <li></li>(first child)
+</ul>
+Css:
+li:first-child {
+    color:steelblue; (first child is the color of steelblue)
+}
+li:nth-child(1) {
+    color:steelblue; (first child is the color of steelblue)
+}
+
+- APPLIES TO ALL ONLYCHILDREN
+li:only-child {
+    color: purple;
+}
+
+- Link/visited
+
+- ELEMENTS
+DIFFERENT PARENT
+ h2 + a {
+    color:red; (turns <a> red that is after the element <h2>)
+}
+
+SAME PARENT
+textarea(box where u input text/example: login input) ~ button {
+    color:purple; (every button after text area turns purple.)
+}
+every a tag that follows an h2 turns the color red.
+
+Parent - Child 
+Every single child in particular parent follows '''
+ul > li {
+    color: purple;
+}
+every li in ul is the color of purple
+
+
+            - ATTRIBUTES
+
+can select certain things in the code based off of their attributes
+- element[attr=value]{
+
+}
+- example
+h2[class=subtitles]{
+
+}
+
+- can select images
+img[src=""]{
+    (SPECIFIC IMAGE)
+}
+- can select multiple images
+if img ends with ../img/
+img[src^="../img/"]{
+
+}
+if img contains /img/
+img[src*="../img/"]{
+
+}
+
+            - DIFFERENT WAY 
+example:
+h2[class~=article-subtitle]{
+    background:green;
+}
+
+- Exception
+example:
+h2[class|=article-subtitle]{
+    (finds either every article-subtitle in h2 or every article-subtitle with a dash)
+}
+
+
+            Coloring
+
+- huge range of colors in css
+https://www.rapidtables.com/web/css/css-color.html (offers many rgb/hexcodes)
+
+
+EVERYTHING HAS TO FLOAT FOR FLOAT TO WORK
+
+
+
+    
+
+
+

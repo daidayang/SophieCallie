@@ -1,0 +1,80 @@
+
+
+body {
+    background: #c0c090;
+    font-family: 'Roboto', sans-serif;
+}
+
+.mytabs {
+    display: flex;
+    flex-wrap: wrap;
+    max-width: 5000px;
+    max-height: 800px;
+    margin: 50px auto;
+    padding: 25px;
+}
+
+.mytabs input[type="radio"] {
+    display: none;
+}
+
+.mytabs label {
+    padding: 25px;
+    background: #483018;
+    font-weight:500;
+    color: white;
+}
+
+.mytabs .tab {
+    width: 100%;
+    padding: 20px;
+    background:#483018;
+    order: 1;
+    display: none;
+    color: white;
+
+}
+
+.mytabs input[type='radio']:checked + label + .tab {
+    display: block;
+}
+
+h1 {
+    font-size: 30px;
+    text-align: center;
+    color: #483018;
+    font-family: 'Times New Roman', Times, serif;
+}
+
+.block1 {
+    float: left;
+    width: 500px;
+    height: 500px;
+    background: #483018;
+    margin-left: 20px;
+}
+
+.block2 {
+    margin-left: 50px;
+    margin-top: 50px;
+    width: 400px;
+    height: 400px;
+    background: #a8c000;
+}
+
+.mainblock {
+    margin-top: 50px;
+    width: 1580px;
+    height: 600px;
+    background: #483018;
+    margin-bottom: 80px;
+}
+
+.sub-mainblock {
+    float: left;
+    margin-top: 50px;
+    margin-left: 50px;
+    width: 1480px;
+    height: 500px;
+    background:#a8c000;
+}

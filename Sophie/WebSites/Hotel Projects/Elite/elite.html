@@ -1,0 +1,801 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+
+    <link rel="preload" as="font" href="https://cdn.elite.se/UI/Static/Font/1156556/f81fa4ca-48c0-496c-a54f-5e1f69bc54a1.woff2?av=1.2.0.22259" crossorigin="anonymous"> 
+    <link rel="preload" as="font" href="https://cdn.elite.se/UI/Static/Font/1156565/d5ca2f36-723d-4882-8658-9746fb0eea72.woff2?av=1.2.0.22259" crossorigin="anonymous"> 
+    <link rel="preload" as="font" href="https://cdn.elite.se/UI/Static/Font/1557755/246beac4-a6e0-48ba-b519-8e4654a3b418.woff2?av=1.2.0.22259" crossorigin="anonymous"> 
+    <link rel="preload" as="font" href="https://cdn.elite.se/UI/Static/Font/1557773/f37b90ce-7fd2-4ba5-8ec9-ed629ddbb3a7.woff2?av=1.2.0.22259" crossorigin="anonymous"> 
+    <link rel="preload" as="font" href="https://cdn.elite.se/UI/Static/Font/icomoon.woff?icply9&amp;av=1.2.0.22259" crossorigin="anonymous"> 
+    <link rel="preload" as="font" href="https://cdn.elite.se/UI/Static/Font/gill-sans/webfonts/37CB4E_0_0.woff2?av=1.2.0.22259" crossorigin="anonymous"> 
+    <link rel="preload" as="font" href="https://cdn.elite.se/UI/Static/Font/gill-sans/webfonts/37CB4E_1_0.woff2?av=1.2.0.22259" crossorigin="anonymous"> 
+    <link rel="preload" as="font" href="https://cdn.elite.se/UI/Static/Font/gill-sans/webfonts/37CB4E_2_0.woff2?av=1.2.0.22259" crossorigin="anonymous"> 
+    <link rel="preload" as="font" href="https://cdn.elite.se/UI/Static/Font/gill-sans/gill-sans-medium.woff2?av=1.2.0.22259" crossorigin="anonymous"> 
+
+    <link href="https://use.typekit.net/ata7jxs.css" rel="stylesheet">
+    
+<style>
+
+body {
+    margin: 0;
+    min-height: 100vh;
+    background: white;
+    font-size: 1rem;
+    font-weight: 400;
+    line-height: 1.5;
+    color: #212529;
+    font-family: "adobe-garamond-pro";
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    background-color: #fcfbf4;
+}
+
+body {
+    background-color: #fcfbf4;
+    font-size: 18px;
+    padding: 0;
+    font-family: "AdobeGaramondW01-Regula";
+}
+
+*, *::after, *::before {
+    box-sizing: border-box;
+}
+
+.t-1, .t-1-s, h4, .button, .button.-small, label, .header-elements-container .header-element, .bread-crumbs, .hotel-result > .change, .hotel-card3 .more, .hotel-card3 .group2, .hotel-card4 ul.tags li, .form-element label, .footer-element ul > li, .footer-element.-extra > .sectioncontent .langcurr, .footer-element.-extra > .sectioncontent .links, .hotel-hero .group, .inline-more .showlink, .rating-item .bottom .who, .rating-item .group, .karta-kontakt .group1 .body .mapslink, .hotell-information .rating a.more, .hotell-information .food .body a.more, .room-card .description .group1 .toggler, .room-card .description .group2 .toggler, .room-card .button, .label-card > h4, .elite-forms label, .elite-forms input + .button, .elite-forms .group + .button, .konfhotel-tabs__konferens > .food .content .menulist .toggle-group .toggler, .locale-table th, .big-checklist, .eh-c-topsection-other > .group, .pnf .pnf-secondary-title, .t-1-m, .t-1-l, h2, .hotel-result .title, .hotel-card3 .title, .hotel-card3 .pricegroup .price, .hotel-card4 .title, .footer-element h2, .list-element .header .title, .karta-kontakt .group1 .body .phone, .eh-c-topsection-campain > .group .title, .t-1-xl, h1, .hotel-hero .title, .stads-hero2 .sectioncontent .pagetitle, h3, h5, h6, .tab-group .tab, .toggle-group > .toggler, .content-card .text h2, .cta-link, .eh-c-topsection-campain > .group .price {
+    font-family: "GillSans", "GillSansNova", "Times New Roman", serif;
+    font-size: 16px;
+    text-transform: uppercase;
+    letter-spacing: 0.125em;
+    line-height: 1.2em;
+    font-weight: 500;
+}    
+.t-1-s, h4, .button, .button.-small, label, .header-elements-container .header-element, .bread-crumbs, .hotel-result > .change, .hotel-card3 .more, .hotel-card3 .group2, .hotel-card4 ul.tags li, .form-element label, .footer-element ul > li, .footer-element.-extra > .sectioncontent .langcurr, .footer-element.-extra > .sectioncontent .links, .hotel-hero .group, .inline-more .showlink, .rating-item .bottom .who, .rating-item .group, .karta-kontakt .group1 .body .mapslink, .hotell-information .rating a.more, .hotell-information .food .body a.more, .room-card .description .group1 .toggler, .room-card .description .group2 .toggler, .room-card .button, .label-card > h4, .elite-forms label, .elite-forms input + .button, .elite-forms .group + .button, .konfhotel-tabs__konferens > .food .content .menulist .toggle-group .toggler, .locale-table th, .big-checklist, .eh-c-topsection-other > .group, .pnf .pnf-secondary-title {
+    font-size: 12px;
+}
+
+.t-1-l, h2, .hotel-result .title, .hotel-card3 .title, .hotel-card3 .pricegroup .price, .hotel-card4 .title, .footer-element h2, .list-element .header .title, .karta-kontakt .group1 .body .phone, .eh-c-topsection-campain > .group .title {
+    font-size: 22px;
+}
+
+h1:first-child, h2:first-child, h3:first-child, h4:first-child, h5:first-child, h6:first-child {
+    margin: 0 0 1rem 0;
+}
+
+ul, ol {
+    margin-top: 0;
+    margin-bottom: 10.5px;
+}
+
+li {
+    display: list-item;
+    text-align: -webkit-match-parent;
+}
+
+ul {
+    margin-bottom: 1rem;
+}
+
+a {
+    background: transparent;
+}
+
+a {
+    color: #008cba;
+    text-decoration: none;
+}
+
+a {
+    font-family: "Futura PT W08 Book",Arial,sans-serif;
+}
+
+a {
+    color: #a52887;
+}
+a {
+    color: inherit;
+    display: inline-block;
+    text-decoration: underline;
+}
+
+
+
+article, aside, details, figcaption, figure, footer, header, hgroup, main, nav, section, summary {
+    display: block;
+}
+
+.fa-sort-down:before {
+    content: "\f0dd";
+}
+
+.fa, .fab, .fad, .fal, .far, .fas {
+    -moz-osx-font-smoothing: grayscale;
+    -webkit-font-smoothing: antialiased;
+    display: inline-block;
+    font-style: normal;
+    font-variant: normal;
+    text-rendering: auto;
+    line-height: 1;
+}
+.fa, .far, .fas {
+    font-family: "Font Awesome 5 Free";
+}
+.fa, .fas {
+    font-weight: 900;
+}
+
+
+.header-elements-container {
+    /* position: fixed; */
+    z-index: 9998;
+    left: 0;
+    top: 0;
+    right: 0;
+}
+
+.header-elements-container .header-element {
+    background-color: #E6E6D7;
+}
+
+
+.header-elements-container .header-element > .mini {
+    display: flex;
+    justify-content: space-between;
+}
+
+
+.header-elements-container .header-element > .mini > .logo {
+    text-align: center;
+    flex-grow: 1;
+    margin: 1rem;
+    height: calc(60px - 2rem);
+}
+
+.header-elements-container .header-element > .mini > .loginicon, .header-elements-container .header-element > .mini > .loggedinicon, .header-elements-container .header-element > .mini > .menuicon {
+    height: 60px;
+    width: auto;
+    flex: 0 0 60px;
+    padding: 0.5rem;
+    border-left: 1px solid rgba(0, 0, 0, 0.2);
+}
+
+.header-elements-container .header-element > .loginpanel, .header-elements-container .header-element > .signuppanel {
+    background-color: #d8d8c1;
+    display: none;
+}
+
+.header-elements-container .header-element a {
+    text-decoration: none;
+    cursor: pointer;
+    color: black;
+}
+
+.header-elements-container .header-element > .full {
+    border-top: 1px solid rgba(0, 0, 0, 0.2);
+    overflow: auto;
+    -webkit-overflow-scrolling: touch;
+    max-height: 0;
+    transition: max-height 0.5s ease-out;
+}
+
+.header-elements-container .header-element > .full > nav {
+    text-align: center;
+}
+
+.header-elements-container .header-element > .full > nav ul {
+    padding-left: 0;
+    margin-bottom: 0;
+}
+
+.header-elements-container .header-element > .full > nav li {
+    list-style-type: none;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.2);
+}
+
+.header-elements-container .header-element > .full > nav li a {
+    display: block;
+    padding: 1rem;
+}
+
+.header-elements-container .header-element > .full > nav .more {
+    display: none;
+}
+
+.header-elements-container .header-element > .full > .lang {
+    border-bottom: 1px solid rgba(0, 0, 0, 0.2);
+    display: flex;
+}
+
+.header-elements-container .header-element > .full > .lang > a {
+    display: block;
+    flex: 1 0;
+    padding: 1rem;
+    text-align: center;
+}
+
+.header-elements-container .header-element > .full > .group > a {
+    display: block;
+    padding: 1rem;
+    text-align: center;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.2);
+}
+
+
+
+
+
+
+
+footer {
+    margin: 0;
+    padding-top: 80px;
+    color: #fff;
+}
+
+footer {
+    padding-top: 0;
+}
+
+.page-section {
+    padding: 1rem;
+    margin-bottom: 1px;
+}
+
+.footer-element {
+    background-color: #222;
+    color: #ddd;
+    margin: 0;
+}
+
+.page-section > .sectioncontent {
+    width: 100%;
+    max-width: 1296px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.footer-element ul {
+    display: flex;
+    flex-direction: column;
+    padding: 0;
+    margin: 0;
+}
+
+.footer-element ul > li {
+    display: block;
+}
+
+
+.footer-element h2 {
+    color: #ddd;
+    margin-top: 0;
+}
+
+.footer-element ul > li > a {
+    display: block;
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
+    text-decoration: none;
+}
+
+.t-0, .t-0-s, div.tooltip-inner, .hotel-card3 .pricegroup .priceinfo, .konfhotel-tabs__rum > .lokaler .header .group > div, .locale-table td, .t-0-m, .elite-forms input.placeholder::placeholder, input#expiration-month::placeholder, input#expiration-year::placeholder, input#cvv::placeholder, input#credit-card-number::placeholder, .t-0-l, .stads-hero > .intro p.introtext, .t-0-xl, .header-elements-container .header-element > .full .search input, .form-element input, .footer-element .newsletter {
+    font-family: "adobe-garamond-pro";
+    font-size: 16px;
+    text-transform: none;
+    letter-spacing: 0;
+}
+
+.footer-element .newsletter {
+    margin-top: 26px;
+}
+
+
+
+p {
+    font-size: 18px;
+    font-family: "AdobeGaramondW01-Regula","Times New Roman",serif;
+}
+
+p {
+    margin: 0 0 1rem 0;
+    font-family: "adobe-garamond-pro";
+    font-size: 1rem;
+}
+
+.footer-element p {
+    color: #ddd;
+    margin: 0 0 1rem 0;
+}
+
+.footer-element .elite-forms {
+    /* background: #333; */
+    padding: 1rem 1rem 1rem 1rem;
+}
+
+.elite-forms label {
+    display: block;
+    margin-top: 0.75rem;
+    margin-bottom: 0.25rem;
+}
+
+
+
+
+button, input, optgroup, select, textarea {
+    color: inherit;
+    font: inherit;
+    margin: 0;
+}
+
+input {
+    line-height: normal;
+}
+
+input, button, select, textarea {
+    font-family: inherit;
+    font-size: inherit;
+    line-height: inherit;
+}
+
+input, .form-control {
+    padding: 7px;
+}
+
+.hide {
+    display: none!important;
+}
+
+
+.elite-forms input, .elite-forms select, .elite-forms textarea {
+    display: block;
+    width: 100%;
+    border-radius: 0;
+    color: #212529;
+}
+
+.elite-forms input[type="text"], .elite-forms input[type="password"], .elite-forms input[type="number"], .elite-forms input[type="phone"], .elite-forms input[type="email"], .elite-forms textarea, .elite-forms select {
+    font-family: "GillSans", "GillSansNova", "Times New Roman", serif;
+    padding: 0.5rem;
+    border: none;
+    background-color: rgba(255, 255, 255, 0.5);
+}
+
+.footer-element .elite-forms input[type="text"] {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+@media (min-width: 1024px) {
+.header-elements-container .header-element {
+    min-height: 60px;
+    display: flex;
+}
+
+.header-elements-container .header-element > .mini .logo {
+    padding-left: 2rem;
+    padding-right: 1rem;
+}
+
+.header-elements-container .header-element > .mini .loginicon, .header-elements-container .header-element > .mini .loggedinicon, .header-elements-container .header-element > .mini .menuicon {
+    display: none;
+}
+
+.header-elements-container .header-element > .loginpanel, .header-elements-container .header-element > .signuppanel {
+    position: absolute;
+    right: 0;
+    top: 60px;
+    z-index: 2100;
+}
+
+.header-elements-container .header-element > .full {
+    max-height: 1000px;
+    display: flex;
+    flex-grow: 1;
+    overflow: visible;
+    border-top: none;
+}
+
+.header-elements-container .header-element > .full nav {
+    display: flex;
+}
+
+.header-elements-container .header-element > .full nav .primary {
+    display: flex;
+}
+
+.header-elements-container .header-element > .full nav .primary ul {
+    display: flex;
+}
+
+.header-elements-container .header-element > .full nav .primary ul li {
+    display: flex;
+    border-bottom: none;
+    border-left: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.header-elements-container .header-element > .full nav .primary ul li.selected {
+    background-color: #d8d8c1;
+}
+
+.header-elements-container .header-element > .full nav .primary ul li a {
+    display: flex;
+    align-items: center;
+}
+
+.header-elements-container .header-element > .full nav .secondary {
+    display: flex;
+    position: relative;
+}
+
+.header-elements-container .header-element > .full nav .secondary .more {
+    display: flex;
+    align-items: center;
+    padding: 1rem;
+    border-left: 1px solid rgba(0, 0, 0, 0.1);
+    cursor: pointer;
+}
+
+.header-elements-container .header-element > .full nav .secondary .list {
+    display: none;
+    text-align: left;
+    border-top: 1px solid rgba(0, 0, 0, 0.1);
+    bottom: 0;
+    left: 0;
+}
+
+.header-elements-container .header-element > .full nav .secondary .list li a {
+    display: block;
+}
+
+.header-elements-container .header-element > .full .lang {
+    margin-left: auto;
+    display: flex;
+    border-bottom: none;
+    color: rgba(0, 0, 0, 0.5);
+    align-items: center;
+    justify-content: flex-end;
+    flex: 1 1 auto;
+}
+
+.header-elements-container .header-element > .full .lang a {
+    border: none !important;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex: 0 0 30px;
+    -ms-flex: 0 0 15%;
+    padding: 1rem;
+    height: 100%;
+}
+
+.header-elements-container .header-element > .full .group {
+    display: flex;
+    color: rgba(0, 0, 0, 0.5);
+}
+
+.header-elements-container .header-element > .full .group a {
+    display: flex;
+    align-items: center;
+    border-bottom: none;
+    border-left: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.header-elements-container .header-element > .full .group a.login {
+    background-color: #5F728B;
+    color: #fff;
+}
+
+.page-section {
+    padding: 1.5rem 3rem;
+}
+
+.footer-element ul {
+    flex-direction: row;
+}
+
+.footer-element ul > li {
+    flex: 1 0;
+    margin-bottom: 0;
+}
+
+.footer-element .newsletter {
+    margin-top: 0;
+}
+
+.footer-element li.newsletter {
+    flex: 0 0 30%;
+}
+
+.elite-forms > .group {
+    margin-bottom: 2rem;
+}
+
+.elite-forms label {
+    margin-top: 1rem;
+}
+
+}
+</style>
+</head>
+
+<body>
+    <header class="header-elements-container">
+    
+    <div class="header-element">
+
+        <div class="mini">
+            <div class="logo">
+                <a href="/en/" class="logo-link no-outline">
+                    <img src="UI/Static/Images/Icons/elite.svg" alt="Elite Hotels logo" height="28" width="111">
+                </a>
+            </div>
+
+                <a class="loginicon js-logintoggle">
+                    <img src="https://www.elite.se/UI/Static/Images/Icons/icon-key.svg" alt="Login" height="43" width="43">
+                </a>
+
+            <a class="menuicon">
+                <img src="https://www.elite.se/UI/Static/Images/Icons/icon-menu.svg" alt="Menu" height="43" width="43">
+            </a>
+        </div>
+
+
+<div class="loginpanel">
+    <div class="inner">
+            <a class="forgot" href="https://idservereu.maverickcrm.com/Account/ForgotPassword?ReturnUrl=%2fconnect%2fauthorize%2fcallback%3fclient_id%3dWS_HG_EHS_AC%26redirect_uri%3dhttps%253a%252f%252felite.se%252fsignin-oidc%253fhotelGroupCode%253dEL027%26response_type%3dcode%26scope%3dopenid%2520profile%2520profileID%2520restApi">
+                Forgot password?
+            </a>
+
+            <a class="signup" href="https://www.elite.se/en/rewards/faq/">
+                <span>Frequently asked questions</span>
+            </a>
+    </div>
+</div>        <div class="full">
+            <nav>
+                <div class="primary">
+                    <ul>
+                            <li class="selected">
+        <a href="https://www.elite.se/en/">Start</a>
+    </li>
+    <li>
+        <a href="https://www.elite.se/en/hotels/">Hotels</a>
+    </li>
+    <li>
+        <a href="https://www.elite.se/en/conference/">Conference</a>
+    </li>
+    <li>
+        <a href="https://www.elite.se/en/rewards/">Rewards</a>
+    </li>
+    <li>
+        <a href="https://www.elite.se/en/corporate-customer/">Corporate customer</a>
+    </li>
+
+                    </ul>
+                </div>
+                <div class="secondary">
+                    <div class="more">
+                        <a href="#"> More</a>
+                    </div>
+                    <div class="list">
+                        <ul>
+                                <li class="links-container-item">
+            <a href="https://www.elite.se/en/always-at-elite-hotels/">Always at Elite</a>
+
+    </li>
+    <li class="links-container-item">
+            <a href="https://www.elite.se/en/restaurants/">Restaurants</a>
+
+    </li>
+    <li class="links-container-item">
+            <a href="https://www.elite.se/en/the-wood-hotel/">The Wood Hotel</a>
+
+    </li>
+    <li class="links-container-item">
+            <a href="https://www.elite.se/en/spa/">VANA spa</a>
+
+    </li>
+
+
+                            <li class="quick-search-field-container search">
+    <form class="elite-forms" novalidate="novalidate">
+        <input type="text" id="search-field" autocomplete="off" placeholder="Search" class="ui-autocomplete-input">
+    </form>
+<ul id="ui-id-1" tabindex="0" class="ui-menu ui-widget ui-widget-content ui-autocomplete ui-front" style="display: none;"></ul></li>                        </ul>
+                    </div>
+                </div>
+            </nav>
+            <div class="lang">
+                
+        <a href="/sv/" data-language="sv" class="js-language-change-header">
+           Svenska
+        </a>
+
+            </div>
+            <div class="group">
+                        <a class="js-signuptoggle" href="https://idservereu.maverickcrm.com/Account/Register?ReturnUrl=%2fconnect%2fauthorize%2fcallback%3fclient_id%3dWS_HG_EHS_AC%26redirect_uri%3dhttps%253a%252f%252felite.se%252fsignin-oidc%253fhotelGroupCode%253dEL027%26response_type%3dcode%26scope%3dopenid%2520profile%2520profileID%2520restApi">Become a member for the best price!</a>
+<a class="login" href="/api/en/login/login">Login</a>                    <a class="login js-logintoggle" href="#"><i class="fas fa-sort-down" aria-hidden="true"></i></a>
+            </div>
+        </div>
+    </div>
+        <div class="page-section booking-container" style="margin-top: 0;padding-top: 0">
+            <div class="sectioncontent search-panel">
+                <!-- Adform Tracking Code BEGIN -->
+<noscript>
+    <p style="margin:0;padding:0;border:0;">
+        <img src="https://track.adform.net/Serving/TrackPoint/?pm=2482298&ADFPageName=Main%20page%20%E2%80%93%20s%C3%B6k%20button&ADFdivider=|" width="1" height="1" alt="" />
+    </p>
+</noscript>
+<!-- Adform Tracking Code END -->
+
+
+
+            </div>
+        </div>
+</header>
+
+    <footer>
+        <div class="page-section footer-element">
+            <div class="sectioncontent">
+                <ul>
+                    <li class="links-container-item footer-menu">
+                        <h2 class="toggler">Elite.se</h2>
+                        <ul class="toggled">
+                            <li>
+                                <a href="/en/hotels/">Hotels</a>
+                                <a href="/en/conference/">Conference</a>
+                                <a href="/en/rewards/">Rewards</a>
+                                <a href="/en/presentkort">Gift card</a>
+                                <a href="https://www.elite.se/en/restaurants/">Restaurants</a>
+                            </li>
+                        </ul>
+                    </li>
+                    <li class="links-container-item footer-menu">
+                        <h2 class="toggler">Reservations</h2>
+                        <ul class="toggled">
+                            <li>
+                                <a href="https://www.elite.se/en/hotel-packages">Hotel packages</a>
+                                <a href="https://www.elite.se/en/manage-your-booking/">Manage your booking</a>
+                            </li>
+                        </ul>
+                    </li>
+                    <li class="links-container-item footer-menu">
+                        <h2 class="toggler">About us</h2>
+                        <ul class="toggled">
+                            <li>
+                                <a href="/en/about-elite-hotels">About us</a>
+                                <a href="https://www.elite.se/en/upcoming-hotels/">Upcoming hotels</a>
+                                <a href="/en/contact-us">Contact us</a>
+                            </li>
+                        </ul>
+                    </li>
+                    <li class="links-container-item footer-menu">
+                        <h2 class="toggler">Our hotels</h2>
+                        <ul class="toggled">
+                            <li>
+                                <a href="https://www.elite.se/en/hotels/stockholm/">Hotels in Stockholm</a>
+                                <a href="https://www.elite.se/en/hotels/gothenburg/">Hotels in Gothenburg</a>
+                                <a href="https://www.elite.se/en/hotels/malmo/">Hotels in Malmö</a>
+                                <a href="/en/hotels/">Hotels in Sweden</a>
+                            </li>
+                        </ul>
+                    </li>
+
+                    <li class="newsletter">
+                        <h2>Newsletter</h2>
+                        <p> Sign up for our latest news and offers</p>
+
+                        <form class="elite-forms" id="footerNewsletterForm" novalidate="novalidate">
+                            <div class="group">
+                                <div class="group">
+                                    <label for="newsletter-email">Email</label>
+                                    <input type="text" id="newsletter-email" name="newsletter-email"
+                                        placeholder="Email">
+                                    <p class="error-message hide" id="error-email-message">
+                                        Something went wrong, please try again.
+                                    </p>
+
+
+                                </div>
+                            </div>
+                            <div class="group">
+                                <div class="group">
+                                    <label for="newsletter-name">Name</label>
+                                    <input type="text" id="newsletter-name" name="newsletter-name" placeholder="Name">
+                                    <p class="error-message hide" id="error-name-message">
+                                        Something went wrong, please try again.
+                                    </p>
+
+
+                                </div>
+                            </div>
+
+                            <div class="group">
+                                <button class="button -small" type="button" id="btnNewsletterFooter">Subscribe</button>
+                            </div>
+
+                            <div class="success-newsletter hide" id="success-newsletter">
+                                Thank you, please check your email to confirm.
+                            </div>
+                            <div id="error-newsletter" class="error-message hide">
+                                <p class="response-error"> Please add the following information E-mail</p>
+                            </div>
+                        </form>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <div class="page-section footer-element -extra">
+            <div class="sectioncontent">
+                <div class="langcurr">
+                    <form class="elite-form" novalidate="novalidate">
+                        <select type="text" name="lang" class="js-language-change-dropdown">
+                            <option selected="selected" data-language="en" value="en">English</option>
+                            <option data-language="sv" value="sv">Svenska</option>
+                        </select>
+
+
+
+                    </form>
+                </div>
+                <div class="links contact-info">
+                    <a href="/">Elite Hotels Of Sweden ©</a>
+                    <a href="tel:+46771788789">+46 (0)771-788 789</a>
+
+                    <a href="mailto:centralreservation@elite.se">centralreservation@elite.se</a>
+                    <a href="/en/terms/website-terms-conditions/">Terms &amp; conditions</a>
+                </div>
+                <div class="social">
+                    <a href="https://www.elite.se/en/social-media/" target="_blank"><i class="icon-facebook"></i></a>
+                    <a href="https://www.elite.se/en/social-media/" target="_blank"><i class="icon-twitter"></i></a>
+                    <a href="https://www.elite.se/en/social-media/" target="_blank"><i class="icon-instagram"></i></a>
+                </div>
+            </div>
+        </div>
+        <div class="page-section footer-element -payment">
+            <div class="sectioncontent">
+                <div class="payments">
+                    <div class="container eliteFooterBottom">
+                        <div style="text-align: center; padding: 15px;">
+                            <p><img src="https://cdn.elite.se/4af5a9/globalassets/footer/visalogo.png" alt="visa.png"
+                                    width="71" height="23">&nbsp; &nbsp;&nbsp;<img
+                                    src="https://cdn.elite.se/4af589/globalassets/footer/mc.png" alt="mastercard.png"
+                                    width="39" height="30">&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;<img
+                                    src="https://cdn.elite.se/4af51a/globalassets/footer/amexlogo.png" alt="Amex.png"
+                                    width="25" height="25">&nbsp; &nbsp;&nbsp;<img
+                                    src="https://cdn.elite.se/4af596/globalassets/footer/swish.png" alt="swish-logo.png"
+                                    width="83" height="25">&nbsp;</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+</body>
+
+</html>

@@ -1,0 +1,82 @@
+﻿var reviewObj = {};
+var reviewIndex = 0;
+
+
+$(function () { 
+
+    $("#title_link").click(function (event) {
+        if (CheckVisible(document.querySelector('#formChat'))) {
+            document.querySelector('#Content').value = document.querySelector('#default_content').value;
+        }
+        if (CheckVisible(document.querySelector('#answer1'))) {
+            document.querySelector('#answer1').value = document.querySelector('#default_answer1').value;
+        }
+        if (CheckVisible(document.querySelector('#answer2'))) {
+            document.querySelector('#answer2').value = document.querySelector('#default_answer2').value;
+        }
+        if (CheckVisible(document.querySelector('#answer3'))) {
+            document.querySelector('#answer3').value = document.querySelector('#default_answer3').value;
+        }
+    });
+});
+
+function CheckVisible(elm) {
+    if (elm) {
+        const style = window.getComputedStyle(elm);
+        return style.display !== 'none' && style.visibility !== 'hidden' && elm.offsetParent !== null;
+
+        console.log('check 1');
+        if (getComputedStyle(elm).visibility === 'hidden') { return false; }
+        console.log('check 2');
+        if (!elm.offsetHeight && !elm.offsetWidth) { return false; }
+        console.log('check 3');
+        return true;
+    }
+    else
+        return false;
+}
+
+function Q_Submit(){
+
+  if (CheckVisible(document.querySelector('#answer1'))) {
+    document.querySelector('#divScore1').style.display = 'block';
+  }
+
+  if (CheckVisible(document.querySelector('#answer2'))) {
+    document.querySelector('#divScore2').style.display = 'block';
+  }
+
+  if (CheckVisible(document.querySelector('#answer3'))) {
+    document.querySelector('#divScore3').style.display = 'block';
+    document.querySelector('#totalScore').innerText  = 'Total score:5';
+    document.querySelector('#btnReview').style.display = 'none';
+    document.querySelector('.btnstepnext').style.display = 'none';    
+  }
+}
+
+function Q_Next(){
+
+  if (CheckVisible(document.querySelector('#answer2'))) {
+    document.querySelector('#panel2').classList.remove("active")
+    document.querySelector('#listep2').classList.remove("active");
+    document.querySelector('#answer2').style.display = 'none';
+
+    document.querySelector('#panel3').classList.add("active")
+    document.querySelector('#listep3').classList.add("active");
+    document.querySelector('#answer3').style.display = 'block';
+  }
+
+  if (CheckVisible(document.querySelector('#answer1'))) {
+    document.querySelector('#panel1').classList.remove("active")
+    document.querySelector('#listep1').classList.remove("active");
+    document.querySelector('#answer1').style.display = 'none';
+
+    document.querySelector('#panel2').classList.add("active")
+    document.querySelector('#listep2').classList.add("active");
+    document.querySelector('#answer2').style.display = 'block';
+  }
+
+  if (CheckVisible(document.querySelector('#answer3'))) {
+    document.querySelector('#divScore3').style.display = 'none';
+  }
+}

@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr" class="WsIbe WsIbeIndex">
+
+
+<style>
+    html {
+        text-align: center;
+    }
+
+    .logo-img {
+        margin-top: 20px;
+        width: 80px;
+    }
+
+    #Valencia {
+        font-family: 'Times New Roman', Times, serif;
+        text-transform: uppercase;
+        margin-top: .35em;
+    }
+
+    .main-img {
+        width: 100%;
+    }
+
+    hr {
+        width: 700px;
+        height: 4px;
+        border: 0;
+        background-color: #CDC1AA;
+    }
+
+    .reservation {
+        background-color: #F2F2F2;
+        width: 1000px;
+        margin: 0 auto;
+
+    }
+
+    .reservation h3 {
+        text-transform: uppercase;
+        font-family: Garamond;
+        font-weight: 100;
+        font-size: 20px;
+    }
+
+    .reservation h1 {
+        font-family: Garamond;
+        font-weight: normal;
+        text-transform: uppercase;
+        width: 700px;
+        display: flex;
+        margin: 0 auto;
+        padding: 80px 0 20px 0;
+
+    }
+
+    .reservation p {
+        font-size: 15px;
+        width: 600px;
+        margin: 15px auto 30px auto;
+        padding-bottom: 50px;
+        font-family: Garamond;
+        color: #5C5C5C;
+        word-spacing: 1px;
+        line-height: 20px;
+    }
+
+    .previous-reservation h3{
+        font-family: Garamond;
+        font-weight: normal;
+        text-transform: uppercase;
+        font-size: 18px;
+        padding-top: 20px;
+    }
+
+    .dateandlocation{
+        text-align: left;
+        margin: 0 auto;
+        width: 475px;
+    }
+
+    .dateandlocation h3{
+        font-family: Helvetica;
+        font-weight: 100;
+        font-size: 20px;
+    }
+
+    .dateandlocation p{
+        font-family: Georgia;
+        font-size: 17px;
+    }
+
+    .Reservation-Container{
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+    }
+
+    .BinB-Container{
+        text-align: left;
+        padding-left:40px;
+        padding-top: 10px;
+    }
+
+    .BinB-Container p{
+        font-family: Georgia;
+        font-size: 17px;
+        margin-top: 0;
+        line-height: 23px;
+    }
+
+    .costanddetails p{
+        margin-bottom: 0;
+        line-height: 23px;
+    }
+
+    .BinB h2{
+        margin: 0;
+        font-family: Helvetica;
+        font-weight: 100;
+        font-size: 20px;
+    }
+
+    .add-on-header h1{
+        font-family: Garamond;
+        font-weight: normal;
+        text-transform: uppercase;
+        font-size: 18px;
+        padding-top: 25px;
+    }
+
+    .previous-reservation hr{
+        margin-top: 30px;
+    }
+
+    .linger-container {
+        display: flex;
+        justify-content: center;
+        padding-top: 25px;
+    }
+
+    .linger p {
+        width: 350px;
+        font-size: 17px;
+        text-align: left;
+        font-family: Arial;
+        color: #5C5C5C;
+    }
+
+    .linger h2 {
+        text-align: left;
+        width: 500px;
+        font-size: 20px;
+        font-family: Arial;
+        color: #5C5C5C;
+        margin-top: 8px;
+    }
+
+    #LateCheckOut {
+        height: 170px;
+        margin-right: 25px;
+        margin-left: 220px;
+    }
+
+    #reservation-button {
+        margin-top: 60px;
+        margin-bottom: 30px;
+        background-color: #CDC1AA;
+        border-width: 0;
+        color: white;
+        text-transform: uppercase;
+        height: 70px;
+        width: 500px;
+        font-size: 17px;
+    }
+
+    .Cost{
+        width: 650px;
+        padding-top: 40px;
+        display: flex;
+        flex-direction: column;
+        margin:0 auto;
+    }
+
+    .Cost p{
+        padding-left: 40px;
+        font-family: Garamond;
+    }
+
+    .Cost h2{
+        padding-left: 40px;
+        text-transform: uppercase;
+        font-family: Arial;
+        font-weight: lighter;
+    }
+
+    .Subtotal, .Addon {
+        display: flex;
+        background-color: #F2F2F2;
+    }
+
+    .Taxes, .YCost {
+        display: flex;
+        background-color: #FFFFFF;
+    }
+
+    .Cost-Num{
+        margin: auto 40px auto auto;
+    }
+
+    #total-cost{
+        margin: auto 40px auto auto
+    }
+
+    #cross-out{
+        text-decoration:line-through;
+        margin: auto 0 auto 0;
+        padding-left: 0;
+    }
+
+    .footer {
+        background-color: #F2F2F2;
+        width: 1000px;
+        margin: 0 auto;
+        margin-top: 50px;
+    }
+
+    .footer h1{
+        font-family: Garamond;
+        font-weight: normal;
+        text-transform: uppercase;
+        width: 800px;
+        margin: 0 auto;
+        padding: 50px 0 40px 0;
+    }
+
+    .footer hr{
+        width:500px;
+    }
+
+    .footer p{
+        font-size: 15px;
+        width: 600px;
+        margin: 30px auto 20px auto;
+        padding-bottom: 30px;
+        font-family: Garamond;
+        color: #5C5C5C;
+        word-spacing: 1px;
+        line-height: 20px;
+    }
+
+    .footer-form{
+        display:flex;
+        flex-direction: column;
+    }
+
+    #footer-text{
+        width:420px;
+        margin: 0 auto;
+        height: 100px;
+        
+    }
+
+    .footer-select {
+        margin:0 auto;
+        width: 430px;
+        border-radius: 3px;
+        height: 25px;
+        margin-bottom: 15px;
+    }
+
+    #footer-button{
+        background-color: #CDC1AA;
+        border-width: 0;
+        color: white;
+        text-transform: uppercase;
+        height: 70px;
+        width: 600px;
+        font-size: 17px;
+        margin: 30px auto 30px auto;
+    }
+
+</style>
+
+<!-- <header>
+    <div class="header">
+        <img src="logo.png" class="logo-img">
+        <p id="Valencia">Valencia Hotel Group</p>
+    </div>
+</header> -->
+
+<body>
+    <div>
+        <img src="main.jpg" class="main-img">
+    </div>
+    <div class="reservation">
+        <h1>We noticed you cancelled your reservation</h1>
+        <hr>
+        <h3>A $50 Value</h3>
+        <p>We realize that plans change and that for whatever reason you had cancelled
+            this reservation. Nonetheless, we appreciate your interest in our hotel,
+            and if you might reconsider re-instating this reservations, we'd like to
+            offer you this incentive.
+        </p>
+    </div>
+
+    <div class="previous-reservation">
+        <h3>Your Previous Reservation</h3>
+        <div class="dateandlocation">
+            <h3>friday, mar 25 - tuesday, mar 29</h3>
+            <p>Hotel Valencia Riverwalk</p>
+        </div>
+
+        <div class="Reservation-Container">
+
+            <div class="reservation-img">
+                <img src="BreakfastinBed.png">
+            </div>
+
+            <div class="BinB-Container">
+                <div class="BinB">
+                    <h2>Breakfast in Bed Package</h2>
+                    <p>Classic King Accessible</p>
+                </div>
+                <div class="costanddetails">
+                    <p>4Nights, 2 Adults</p>
+                    <p>$1,713.48</p>
+                </div>
+            </div>
+
+        </div>
+        <hr>
+    </div>
+
+    <div class="add-on">
+        <div class="add-on-header">
+            <h1>Your Free Add-on</h1>
+        </div>
+        <div class="linger-container">
+            <img id="LateCheckOut" src="LateCheckOut.jpg">
+            <div class="linger">
+                <h2>Linger a Little Longer</h2>
+                <p>Guarantee late checkout of 3 pm. We hate goodbyes so we invite you to linger a little longer. Sleep
+                    in, sleep it off, and start your day when you are
+                    good and ready! Until we meet again, this is not goodbye, this is see you again
+                    soon.
+                </p>
+            </div>
+        </div>
+    </div>
+
+
+
+    <div class="Cost">
+        <div class="Subtotal">
+            <p>Subtotal</p>
+            <p class="Cost-Num">$1,436.00</p>
+        </div>
+
+        <div class="Taxes">
+            <p>Taxes & Fees</p>
+            <p class="Cost-Num">$277.48</p>
+        </div>
+
+        <div class="Addon">
+            <p>Add on: Linger a Little Longer</p>
+            <p class="Cost-Num" style="margin-right:10px">$0.00</p>
+            <p id="cross-out" style="margin-right: 40px">$50.00</p>
+        </div>
+
+        <div class="YCost">
+            <h2>Your Cost</h2>
+            <h2 id="total-cost">$1,713.48</h2>
+        </div>
+
+    </div>
+
+    <div class="Reservation">
+        <input type="button" id="reservation-button" onclick="window.location.href='https://www.w3docs.com';"
+            value="CLICK HERE TO BOOK THIS RESERVATION" />
+    </div>
+
+    <div class="footer">
+        <h1>Or share with us the reason why you cancelled,
+            and we'll send you a 10% discount towards your
+            next stay.
+        </h1>
+        <hr>
+        <p>Even if you prefer to re-book your cancelled reservation,
+            we still want to encourage you to consider our hotel
+            for your next stay. If you could share with use the
+            reason why you cancelled your reservation we will send
+            you a discount code good for 10% off your next stay with us!
+        </p>
+        <div class="footer-form">
+        <select class="footer-select">
+            <option>
+                SELECT A CANCELLATION REASON
+            </option>
+        </select>
+        <input id="footer-text" value="Other comments"type="text">
+        <input id="footer-button" type="button" value="SUBMIT CANCELLATION REASON AND GET DISCOUNT">
+        </div>
+    </div>
+
+</body>

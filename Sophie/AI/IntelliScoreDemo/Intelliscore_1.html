@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<!-- saved from url=(0048)https://bridgedemo.force10.ai/openaireview/index -->
+<html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SHR Bridge | Intelliscore</title>
+    <link rel="stylesheet" href="./Intelliscore_files/bootstrap.min.css">
+    <link rel="stylesheet" href="./Intelliscore_files/font-awesome.min.css">
+    <link rel="stylesheet" href="./Intelliscore_files/animate.css">
+    <link href="./Intelliscore_files/toastr.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="./Intelliscore_files/inspinia.css">
+    <link rel="stylesheet" href="./Intelliscore_files/style.css">
+    
+    <link href="./Intelliscore_files/spinners.css" rel="stylesheet">
+
+    <link href="./Intelliscore_files/jquery-steps.css" rel="stylesheet">
+
+    <style type="text/css">
+        .step-app > .step-steps {
+            margin: 0;
+            padding: 0;
+            display: flex;
+            border-radius: 3px 3px 0 0;
+            overflow: hidden;
+            font-size: larger;
+        }
+
+            .step-app > .step-steps > li.active {
+                background-color: #fab400;
+                color: #fff;
+            }
+
+            .step-app > .step-steps > li.done {
+                background-color: #edd28a;
+                color: #fff;
+            }
+
+        .step-app > .step-content {
+            border: 0;
+            padding: 10px;
+            border-top: 0;
+        }
+
+        .step-app > .step-steps > li {
+            list-style: none;
+            flex: 1;
+            cursor: pointer;
+            display: block;
+            text-decoration: none;
+            border-right: 1px solid #fff;
+            border-radius: 5px;
+            margin: 0 0.5em 0.5em;
+            padding: 1em 1em;
+        }
+
+        .step-app > .step-footer {
+            margin-top: 15px;
+            margin-bottom: 15px;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .step-app > .step-steps > li {
+            cursor: default;
+        }
+
+        h2{
+            font-weight: 800 !important;
+            font-size: 30px !important;
+            color: #fff !important;
+        }
+
+        .titleparent {
+            text-align: center;    
+        }
+
+        .title {
+            text-align:center;
+            background-color: #fab400 !important;
+        }
+
+        .btn-primary{
+            font-weight: 800;
+            font-size: 20px;
+        }
+
+        .submitparent{
+            text-align:center;
+            float:none;
+            width:auto;
+        }
+
+        #listep1{
+            font-weight: 800 !important;
+            font-size: 20px !important;        
+        }
+
+        #listep2 {
+            font-weight: 800 !important;
+            font-size: 20px !important;
+            ;
+        }
+
+        #listep3{
+            font-weight: 800 !important;
+            font-size: 20px !important;
+            ;
+        }
+        
+     </style>
+
+
+</head>
+<body class="white-bg">
+    
+
+<div class="row wrapper border-bottom white-bg page-heading title">
+    <div class="titleparent">
+        <h2 id="title_link" >Intelliscore</h2>
+    </div>
+</div>
+<div class="wrapper wrapper-content animated fadeInRight">
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="ibox float-e-margins" style="margin-bottom:250px !important;">
+                <div class="ibox-content">
+                    <div class="row">
+                        <div class="col-sm-12 center-block">
+                            <div class="row">
+                                <form id="formChat">
+                                    <div class="row row-ibox">
+                                        <fieldset class="form-horizontal">
+                                            <div class="clearfix"></div>
+                                            <div class="form-group" id="divTemperature" style="display:none;">
+                                                <label class="col-md-2 control-label">Temperature</label>
+                                                <div class="col-md-6">
+                                                    <input type="number" min="0" max="2" step="0.1" name="Temperature" id="Temperature" class="form-control" value="0">
+                                                </div>
+                                            </div>
+                                            <div class="clearfix"></div>
+                                            <div class="form-group" style="display:none;">
+                                                <label class="col-md-2 control-label">Role</label>
+                                                <div class="col-md-6">
+                                                    <input type="text" name="Role" id="Role" class="form-control" value="You are a helpful assistant.">
+                                                </div>
+                                            </div>
+                                            <div class="clearfix"></div>
+                                            <div class="form-group" style="padding-top:60px;">
+                                                <label class="col-md-2 control-label">Content</label>
+                                                <div class="col-md-8">
+                                                    <textarea style="background-color:#fff" class="form-control" id="Content" name="Content" placeholder="Content" rows="12"></textarea>
+                                                </div>
+                                            </div>
+                                            <div class="clearfix"></div>
+                                            <div class="form-group col-md-12" style="padding-bottom:30px; padding-top:40px; text-align:center;">
+                                                <div class="col-md-6 submitparent">
+                                                    <button type="button" class="btn btn-primary" name="btnSend" id="btnSend" onclick="window.location.href='Intelliscore_3.html';">
+                                                        <i class="fa fa-send-o"></i>
+                                                        Submit
+                                                        <span id="divload" class="loading triangles" style="display:none;"></span>
+                                                    </button>
+
+                                                </div>
+                                            </div>
+                                            <div class="clearfix"></div>
+                                            <div class="form-group" id="divResult" style="display:none;">
+                                                <label class="col-md-2 control-label">Result</label>
+                                                <div class="col-md-6" id="Result" name="Result">
+                                                </div>
+                                            </div>
+                                        </fieldset>
+                                    </div>
+                                </form>
+
+                                <div id="divQA" class="row row-ibox" style="display:none;">
+                                    <fieldset class="form-horizontal">
+                                        <div class="clearfix"></div>
+                                        <div class="form-group" style="font-size:15px;">
+                                            <label class="col-md-2 control-label"></label>
+                                            <h2>&nbsp;For each question, please provide your answer:</h2>
+                                        </div>
+                                        <div class="clearfix"></div>
+                                        <div class="form-group">
+                                            <label class="col-md-2 control-label"></label>
+                                            <div class="col-md-8">
+                                                <div class="step-app" id="divQuestions">
+                                                    <ul class="step-steps">
+                                                        <li data-step-target="step1" id="listep1" class="active">First Question</li>
+                                                        <li data-step-target="step2" id="listep2">Second Question</li>
+                                                        <li data-step-target="step3" id="listep3">Third Question</li>
+                                                    </ul>
+                                                    <div class="step-content">
+                                                        <div class="step-tab-panel active" data-step="step1">
+                                                            <h3 id="question1">question 1</h3>
+                                                            <form name="frmQuestion1" id="frmQuestion1" novalidate="novalidate">
+                                                                <textarea required="" style="background-color:#fff" class="form-control" id="answer1" name="answer1" placeholder="Answer to question 1" rows="12"></textarea>
+
+                                                            </form>
+                                                            <div id="divScore1" style="padding: 1em 1em;display:none;">
+                                                                <div class="clearfix"></div>
+                                                                <div class="form-group">
+                                                                    <div class="form-control" style="border:0;padding:0;height:auto;" id="Score1" name="Score1">
+                                                                    </div>
+                                                                    <input type="hidden" id="HiScore1" name="HiScore1">
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="step-tab-panel" data-step="step2">
+                                                            <h3 id="question2">
+                                                                question 2
+                                                            </h3>
+                                                            <form name="frmQuestion2" id="frmQuestion2" novalidate="novalidate">
+                                                                <textarea required="" style="background-color:#fff" class="form-control" id="answer2" name="answer2" placeholder="Answer to question 2" rows="12"></textarea>
+                                                            </form>
+                                                            <div id="divScore2" style="padding: 1em 1em;display:none;">
+                                                                <div class="clearfix"></div>
+                                                                <div class="form-group">
+
+                                                                    <div class="form-control" style="border:0;padding:0;height:auto;" id="Score2" name="Score2">
+                                                                    </div>
+                                                                    <input type="hidden" id="HiScore2" name="HiScore2">
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="step-tab-panel" data-step="step3">
+                                                            <h3 id="question3">
+                                                                question 3
+                                                            </h3>
+                                                            <form name="frmQuestion3" id="frmQuestion3" novalidate="novalidate">
+                                                                <textarea required="" style="background-color:#fff" class="form-control" id="answer3" name="answer3" placeholder="Answer to question 3" rows="12"></textarea>
+                                                            </form>
+                                                            <div id="divScore3" style="padding: 1em 1em;display:none;">
+                                                                <div class="clearfix"></div>
+                                                                <div class="form-group">
+
+                                                                    <div class="form-control" style="border:0;padding:0;height:auto;" id="Score3" name="Score3">
+                                                                    </div>
+                                                                    <input type="hidden" id="HiScore3" name="HiScore3">
+                                                                    <h3 id="totalScore"></h3>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="step-footer">
+                                                        <button type="button" class="btn btn-primary" name="btnReview" id="btnReview">
+                                                            <i class="fa fa-send-o"></i>
+                                                            Submit
+                                                            <span id="divloadreview" class="loading triangles" style="display:none;"></span>
+                                                        </button>
+                                                        <button data-step-action="prev" class="btn btn-primary" style="display: none;">Previous</button>
+                                                        <button data-step-action="next" class="btn btn-primary btnstepnext">Next</button>
+                                                        <button data-step-action="finish" class="btn btn-primary btnstepfinish" style="display: none;">Finish</button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                    </fieldset>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<input type="hidden" class="getSubmitUrl" value="/openaireview/getquestions">
+<input type="hidden" class="getReviewUrl" value="/openaireview/review">
+<input type="hidden" id="default_content" value="Bradbury’s &quot;There Will Come Soft Rains&quot; is a dystopian story. The world is set in the future and technology is advanced enough where robots do everything perfectly for humans. The house protects the residents from everything and shuts everything out. Even &quot;If a sparrow brushed a window, the shade popped up, the bird, startled, [flies] off&quot;. Now, the humans are gone and the world is deserted. There is one last house, standing among radioactive ruins. When the fire breaks out in the house, the robots try to put it out and save the house but fail, hinting something similar could’ve happened with the other houses. In a dystopia, the author hints or writes about a possible future that can destroy or harm humanity. Bradbury shows us in the end technology cannot save us.">
+<input type="hidden" id="default_answer1" value="In &quot;There Will Come Soft Rains,&quot; Bradbury depicts a dystopian world where technology is advanced enough to do everything perfectly for humans. The house is fully automated, protecting the residents from everything and shutting out the outside world. However, when the humans are gone and the world is deserted, the technology ultimately fails to save the house from a fire, hinting at the limitations of technology and its inability to save humanity in the end.">
+<input type="hidden" id="default_answer2" value="The house in Bradbury&#39;s &quot;There Will Come Soft Rains&quot; is significant as it represents the pinnacle of technological advancement. It is fully automated and capable of protecting its residents from any harm. The house&#39;s interactions with the environment, such as the automatic response to a sparrow brushing a window, demonstrate the extent to which technology has taken over human responsibilities. However, as the story progresses, the house&#39;s failure to protect itself from the fire hints at the limitations of technology and serves as a warning about the potential consequences of relying too heavily on it.">
+<input type="hidden" id="default_answer3" value="The story &quot;There Will Come Soft Rains&quot; conveys the theme of the limitations of technology in saving humanity in a dystopian future in several ways. Firstly, the advanced technology in the story, represented by the robots and the automated house, is unable to prevent the destruction caused by the fire. This failure suggests that even the most advanced technology has its limitations in protecting humanity. Additionally, the deserted and radioactive world in which the story is set implies that despite technological advancements, humanity has still faced a catastrophic downfall. This serves as a warning about the potential consequences of relying too heavily on technology. Overall, the story portrays a future where technology, despite its capabilities, ultimately cannot save humanity from its own destruction.">
+
+
+
+    <script src="./Intelliscore_files/jquery.min.js.download"></script>
+    <script src="./Intelliscore_files/bootstrap.min.js.download"></script>
+    <script src="./Intelliscore_files/metisMenu.min.js.download"></script>
+    <!-- Folding left nav bar -->
+    <script src="./Intelliscore_files/jquery.slimscroll.js.download"></script>
+    <!--script src="~/lib/jquery-footable/footable.min.js"></script-->
+    <script src="./Intelliscore_files/toastr.min.js.download"></script>
+    <script src="./Intelliscore_files/inspinia.js.download"></script> 
+    <script src="./Intelliscore_files/site.js.download"></script>
+    
+    <script src="./Intelliscore_files/jquery.validate.min.js.download"></script>
+    <script src="./Intelliscore_files/jquery.validate.unobtrusive.min.js.download"></script>
+    <script src="./Intelliscore_files/jquery-steps.js.download"></script>
+    <script src="./Intelliscore_files/review.js.download"></script>
+
+
+
+</body></html>

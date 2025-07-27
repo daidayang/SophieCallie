@@ -1,0 +1,16 @@
+.FoodImg {
+    float: left;
+    width: 33%;
+    margin-top: 0px;
+  }
+  
+  .FoodDesc {
+    float: left;
+    width: 60%;
+    margin-left: 20px;
+  }
+  
+  .FoodItem {
+    float: left;
+  }
+  
